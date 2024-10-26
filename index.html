@@ -3,28 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu de Tenues</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Jeu de Remplissage</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #000;
+        }
+        #gameCanvas {
+            width: 100vw;
+            height: 100vh;
+            background-color: red;
+        }
+        #score {
+            position: absolute;
+            color: white;
+            font-size: 24px;
+            top: 10px;
+            left: 10px;
+        }
+    </style>
 </head>
 <body>
-    <div id="snake"></div>
-    <div id="game-container">
-        <div id="character">
-            <img id="upper-part" src="textures/facet_upper_1.png" alt="Partie Supérieure">
-            <img id="lower-part" src="textures/facet_lower_1.png" alt="Partie Inférieure">
-        </div>
-        <div id="controls">
-            <div class="control-group">
-                <button id="prev-upper">👆 Précédent</button>
-                <button id="next-upper">👆 Suivant</button>
-            </div>
-            <div class="control-group">
-                <button id="prev-lower">👇 Précédent</button>
-                <button id="next-lower">👇 Suivant</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+    <div id="score">Score: 0</div>
+    <canvas id="gameCanvas"></canvas>
+    <audio id="backgroundMusic" loop>
+        <source src="stress_music.mp3" type="audio/mpeg">
+    </audio>
+    <script src="app.js"></script>
 </body>
 </html>
