@@ -3,18 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu de Remplissage Rapide</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Jeu de Tenues</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div id="snake"></div>
     <div id="game-container">
-        <canvas id="gameCanvas"></canvas>
-        <div id="score">Score: 0</div>
+        <div id="character">
+            <img id="upper-part" src="textures/facet_upper_1.png" alt="Partie Supérieure">
+            <img id="lower-part" src="textures/facet_lower_1.png" alt="Partie Inférieure">
+        </div>
+        <div id="controls">
+            <div class="control-group">
+                <button id="prev-upper">👆 Précédent</button>
+                <button id="next-upper">👆 Suivant</button>
+            </div>
+            <div class="control-group">
+                <button id="prev-lower">👇 Précédent</button>
+                <button id="next-lower">👇 Suivant</button>
+            </div>
+        </div>
     </div>
-    <!-- Musique stressante (Assurez-vous d'avoir un fichier audio valide ou utilisez un lien en ligne) -->
-    <audio id="backgroundMusic" src="stress_music.mp3" loop></audio>
 
     <script src="script.js"></script>
 </body>
 </html>
-
