@@ -10,13 +10,16 @@ canvas.height = window.innerHeight;
 let score = 0;
 let fillAmount = 0; // Proportion de remplissage
 let pixelSize = 10; // Taille du pixel (peut être ajustée)
-let fillSpeed = 1; // Remplit 1 pixel par intervalle
+let totalPixels; // Nombre total de pixels à remplir
+let fillSpeed; // Pixels à remplir par intervalle
 let interval;
 
 // Fonction pour démarrer le jeu
 function startGame() {
     music.play();
     fillAmount = 0;
+    totalPixels = 160; // Commencer avec 160 pixels
+    fillSpeed = (canvas.width * canvas.height) / (totalPixels * 100); // Remplissage sur 1 seconde
     scoreDisplay.textContent = `Score: ${score}`;
     canvas.style.display = "block"; // Affiche le canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Efface le canvas
@@ -25,36 +28,39 @@ function startGame() {
 
 // Boucle de remplissage
 function fillLoop() {
+    const startTime = performance.now();
+
     interval = setInterval(() => {
-        // Remplit les pixels du bas vers le haut
-        for (let i = 0; i < fillSpeed; i++) {
-            if (fillAmount < (canvas.width * canvas.height) / (pixelSize * pixelSize)) {
-                // Calculer la position du pixel à remplir
-                let x = (fillAmount % (canvas.width / pixelSize)) * pixelSize;
-                let y = Math.floor(fillAmount / (canvas.width / pixelSize)) * pixelSize;
+        const elapsedTime = performance.now() - startTime;
 
-                ctx.fillStyle = 'red';
-                ctx.fillRect(x, canvas.height - (y + pixelSize), pixelSize, pixelSize);
-                fillAmount++;
+        // Remplissage pour 1 seconde
+        if (elapsedTime < 1000) {
+            const pixelsToFill = Math.floor(elapsedTime * fillSpeed / 1000);
+            for (let i = fillAmount; i < pixelsToFill; i++) {
+                if (i < totalPixels) {
+                    // Calculer la position du pixel à remplir
+                    let x = (i % (canvas.width / pixelSize)) * pixelSize;
+                    let y = Math.floor(i / (canvas.width / pixelSize)) * pixelSize;
+
+                    ctx.fillStyle = 'red';
+                    ctx.fillRect(x, canvas.height - (y + pixelSize), pixelSize, pixelSize);
+                }
             }
-        }
+            fillAmount = pixelsToFill;
+        } else {
+            clearInterval(interval);
 
-        // Vérifie si on est à 7% avant la fin
-        if (fillAmount >= ((canvas.width * canvas.height) * 0.93) / (pixelSize * pixelSize)) {
-            ctx.fillStyle = 'green';
-            for (let i = fillAmount; i < (canvas.width * canvas.height) / (pixelSize * pixelSize); i++) {
-                let x = (i % (canvas.width / pixelSize)) * pixelSize;
-                let y = Math.floor(i / (canvas.width / pixelSize)) * pixelSize;
-                ctx.fillRect(x, canvas.height - (y + pixelSize), pixelSize, pixelSize);
+            // Change la couleur à vert lorsque 93% est rempli
+            if (fillAmount >= (totalPixels * 0.93)) {
+                ctx.fillStyle = 'green';
+                for (let i = fillAmount; i < totalPixels; i++) {
+                    let x = (i % (canvas.width / pixelSize)) * pixelSize;
+                    let y = Math.floor(i / (canvas.width / pixelSize)) * pixelSize;
+                    ctx.fillRect(x, canvas.height - (y + pixelSize), pixelSize, pixelSize);
+                }
             }
-            clearInterval(interval);
-        }
 
-        // Vérifie si on atteint 100%
-        if (fillAmount >= (canvas.width * canvas.height) / (pixelSize * pixelSize)) {
-            clearInterval(interval);
             setTimeout(startGame, 1000); // Recommence après 1 seconde
-            return;
         }
 
     }, 10); // 10ms pour rendre le remplissage fluide
@@ -62,10 +68,10 @@ function fillLoop() {
 
 // Fonction pour gérer le clic ou l'appui sur la barre d'espace
 function handleInput() {
-    if (fillAmount >= ((canvas.width * canvas.height) * 0.93) / (pixelSize * pixelSize) && fillAmount < (canvas.width * canvas.height) / (pixelSize * pixelSize)) {
+    if (fillAmount >= (totalPixels * 0.93) && fillAmount < totalPixels) {
         score++;
-        fillSpeed *= 2; // Double la vitesse
-        pixelSize /= 2; // Divise la taille du pixel par 2
+        totalPixels /= 2; // Divise le nombre total de pixels par 2
+        fillSpeed = (canvas.width * canvas.height) / (totalPixels * 100); // Recalcule la vitesse de remplissage
         clearInterval(interval);
         fillAmount = 0; // Réinitialise la quantité remplie pour le nouveau niveau
         fillLoop(); // Redémarre la boucle de remplissage
