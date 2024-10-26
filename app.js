@@ -20,6 +20,7 @@ function startGame() {
     thickness = canvas.width; // Épaisseur revient à la largeur initiale
     scoreDisplay.textContent = `Score: ${score}`;
     canvas.style.display = "block"; // Affiche le canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Efface le canvas
     fillLoop();
 }
 
