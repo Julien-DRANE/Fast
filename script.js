@@ -24,38 +24,43 @@ let lineThickness = 20; // Épaisseur initiale de la bande rouge
 const initialThickness = 20;
 let currentThickness = lineThickness;
 
-const fillSpeed = 0.5; // Pixels par frame
-let currentFill = 0;
+const fillDuration = 800; // Durée de remplissage en millisecondes
+let currentFill = 0; // En pixels
+let startTime = null;
 
 const greenThreshold = 0.95; // 95% rempli
 
 // Fonction de dessin
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function draw(timestamp) {
+    if (!startTime) startTime = timestamp;
+    const elapsed = timestamp - startTime;
+
+    // Calculer le remplissage en fonction du temps écoulé
+    const fillRatio = elapsed / fillDuration;
+    currentFill = fillRatio * canvas.height;
 
     // Déterminer la couleur
-    const fillRatio = currentFill / canvas.height;
     let color;
-    if (fillRatio >= greenThreshold) {
+    if (fillRatio >= greenThreshold && fillRatio < 1) {
         color = 'green';
     } else {
         color = 'red';
     }
 
     // Dessiner la bande
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = color;
     ctx.fillRect(0, canvas.height - currentFill, canvas.width, currentThickness);
 
-    // Mettre à jour la progression
-    if (fillRatio < 1) {
-        currentFill += fillSpeed;
-    }
-
-    // Vérifier si le remplissage est complet sans appui
+    // Vérifier si le remplissage est complet
     if (fillRatio >= 1) {
         // Game Over ou réinitialisation
         resetGame();
+        return;
     }
+
+    // Continuer la boucle de jeu
+    requestAnimationFrame(draw);
 }
 
 // Fonction de réinitialisation
@@ -64,7 +69,8 @@ function resetGame() {
     currentThickness = initialThickness;
     score = 0;
     updateScore();
-    // Optionnel: Arrêter la musique ou afficher un message de fin
+    startTime = null;
+    // Vous pouvez ajouter des animations ou des messages de fin ici
 }
 
 // Fonction de mise à jour du score
@@ -86,16 +92,11 @@ function handleTap() {
         currentThickness = Math.max(currentThickness / 2, 1);
         // Réinitialiser le remplissage
         currentFill = 0;
+        startTime = null;
     } else {
         // Optionnel: Feedback en cas d'erreur
     }
 }
 
-// Boucle de jeu
-function gameLoop() {
-    draw();
-    requestAnimationFrame(gameLoop);
-}
-
-// Démarrer la boucle de jeu
-gameLoop();
+// Boucle de jeu initiale
+requestAnimationFrame(draw);
