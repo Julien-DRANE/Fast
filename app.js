@@ -2,6 +2,7 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const scoreDisplay = document.getElementById('score');
 const startButton = document.getElementById('startButton');
+const instruction = document.getElementById('instruction');
 const music = document.getElementById('backgroundMusic');
 
 canvas.width = window.innerWidth;
@@ -9,45 +10,51 @@ canvas.height = window.innerHeight;
 
 let score = 0;
 let totalPixels = 160; // Nombre initial de pixels
-let pixels = []; // Liste des cellules à remplir
+let pixels = []; // Tableau des cellules
 let fillIndex = 0; // Index actuel de remplissage
 let isFilling = false;
 let fillStartTime = null;
-let fillDuration = 1000; // Durée de remplissage en millisecondes
+const fillDuration = 1000; // Durée de remplissage en millisecondes (1 seconde)
 let fillComplete = false;
 let greenPhase = false;
+let cellWidth = 0;
+let cellHeight = 0;
 
-function createGrid(pixelsCount) {
+// Fonction pour créer la grille de pixels, triée du bord vers le centre
+function createGrid(totalPixels) {
     pixels = [];
-    const cols = Math.floor(Math.sqrt(pixelsCount * (canvas.width / canvas.height)));
-    const rows = Math.floor(pixelsCount / cols);
-    const cellWidth = canvas.width / cols;
-    const cellHeight = canvas.height / rows;
+    const aspectRatio = canvas.width / canvas.height;
+    const cols = Math.ceil(Math.sqrt(totalPixels * aspectRatio));
+    const rows = Math.ceil(totalPixels / cols);
+    cellWidth = canvas.width / cols;
+    cellHeight = canvas.height / rows;
 
-    // Générer les cellules en partant des bords vers le centre
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
     for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
-            // Calculer la distance au centre pour ordonner les cellules
-            const centerX = cols / 2;
-            const centerY = rows / 2;
-            const distance = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
-            pixels.push({
-                x: x * cellWidth,
-                y: y * cellHeight,
-                distance: distance
-            });
+            if (pixels.length >= totalPixels) break;
+            const cellX = x * cellWidth;
+            const cellY = y * cellHeight;
+            const cellCenterX = cellX + cellWidth / 2;
+            const cellCenterY = cellY + cellHeight / 2;
+            const distance = Math.sqrt(Math.pow(cellCenterX - centerX, 2) + Math.pow(cellCenterY - centerY, 2));
+            pixels.push({x: cellX, y: cellY, distance});
         }
     }
 
-    // Trier les cellules par distance décroissante (bords vers centre)
+    // Trier les cellules par distance décroissante (du bord vers le centre)
     pixels.sort((a, b) => b.distance - a.distance);
 }
 
+// Fonction pour démarrer le jeu
 function startGame() {
     music.play();
     score = 0;
     updateScore();
     startButton.style.display = 'none';
+    instruction.style.display = 'none';
     canvas.style.display = 'block';
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     totalPixels = 160;
@@ -56,59 +63,72 @@ function startGame() {
     isFilling = true;
     fillComplete = false;
     greenPhase = false;
+    fillStartTime = null;
     requestAnimationFrame(fill);
 }
 
+// Fonction pour remplir l'écran
 function fill(timestamp) {
     if (!fillStartTime) fillStartTime = timestamp;
     const elapsed = timestamp - fillStartTime;
 
-    const progress = Math.min(elapsed / fillDuration, 1);
-    const pixelsToFill = Math.floor(progress * totalPixels);
+    if (isFilling) {
+        const progress = Math.min(elapsed / fillDuration, 1); // Progression de 0 à 1
+        const pixelsToFill = Math.floor(progress * totalPixels);
 
-    while (fillIndex < pixelsToFill && fillIndex < totalPixels) {
-        const cell = pixels[fillIndex];
-        if (!greenPhase) {
-            ctx.fillStyle = 'red';
-        } else {
-            ctx.fillStyle = 'green';
-        }
-        ctx.fillRect(cell.x, cell.y, canvas.width / Math.floor(Math.sqrt(totalPixels * (canvas.width / canvas.height))), canvas.height / Math.floor(totalPixels / Math.floor(Math.sqrt(totalPixels * (canvas.width / canvas.height)))));
-        fillIndex++;
-    }
-
-    if (progress < 1) {
-        requestAnimationFrame(fill);
-    } else {
-        isFilling = false;
-        fillComplete = true;
-        // Passe en phase verte
-        greenPhase = true;
-        // Remplir les pixels restants en vert
-        for (; fillIndex < totalPixels; fillIndex++) {
+        // Remplir les pixels jusqu'à la progression actuelle
+        while (fillIndex < pixelsToFill && fillIndex < totalPixels) {
             const cell = pixels[fillIndex];
-            ctx.fillStyle = 'green';
-            ctx.fillRect(cell.x, cell.y, canvas.width / Math.floor(Math.sqrt(totalPixels * (canvas.width / canvas.height))), canvas.height / Math.floor(totalPixels / Math.floor(Math.sqrt(totalPixels * (canvas.width / canvas.height)))));
+            ctx.fillStyle = 'red';
+            ctx.fillRect(cell.x, cell.y, cellWidth, cellHeight);
+            fillIndex++;
+        }
+
+        // Vérifier si on atteint 90% de remplissage
+        if (!greenPhase && fillIndex >= Math.floor(0.9 * totalPixels)) {
+            greenPhase = true;
+            fillComplete = true;
+            // Remplir les pixels restants en vert
+            for (; fillIndex < totalPixels; fillIndex++) {
+                const cell = pixels[fillIndex];
+                ctx.fillStyle = 'green';
+                ctx.fillRect(cell.x, cell.y, cellWidth, cellHeight);
+            }
+            isFilling = false;
+            instruction.style.display = 'block'; // Afficher les instructions pour passer au niveau suivant
+            return; // Arrêter la boucle d'animation
+        }
+
+        if (progress < 1) {
+            requestAnimationFrame(fill);
+        } else {
+            // Si le remplissage est terminé sans atteindre 90%
+            fillComplete = true;
+            isFilling = false;
+            instruction.style.display = 'block';
         }
     }
 }
 
+// Fonction pour mettre à jour le score affiché
 function updateScore() {
     scoreDisplay.textContent = `Score: ${score}`;
 }
 
+// Fonction pour gérer l'entrée utilisateur (clic ou barre d'espace)
 function handleInput() {
     if (fillComplete && greenPhase) {
         score++;
         updateScore();
-        totalPixels = Math.max(1, Math.floor(totalPixels / 2)); // Diviser par deux, minimum 1
+        totalPixels = Math.max(1, Math.floor(totalPixels / 2)); // Diviser le nombre de pixels par deux, minimum 1
         createGrid(totalPixels);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         fillIndex = 0;
         isFilling = true;
-        fillStartTime = null;
         fillComplete = false;
         greenPhase = false;
+        fillStartTime = null;
+        instruction.style.display = 'none';
         requestAnimationFrame(fill);
     }
 }
@@ -123,21 +143,23 @@ window.addEventListener('keydown', (event) => {
     }
 });
 
-// Écouteur d'événement pour le bouton
+// Écouteur d'événement pour le bouton de démarrage
 startButton.addEventListener('click', startGame);
 
-// Gestion du redimensionnement de la fenêtre
-window.addEventListener('resize', () => {
+// Fonction pour gérer le redimensionnement de la fenêtre
+function updateCanvasSize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    if (!isFilling && !fillComplete) {
+    if (isFilling || fillComplete) {
+        // Recréer la grille avec le nombre actuel de pixels
+        createGrid(totalPixels);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-    } else {
-        // Redessiner les pixels remplis
         for (let i = 0; i < fillIndex; i++) {
             const cell = pixels[i];
-            ctx.fillStyle = greenPhase ? 'green' : 'red';
-            ctx.fillRect(cell.x, cell.y, canvas.width / Math.floor(Math.sqrt(totalPixels * (canvas.width / canvas.height))), canvas.height / Math.floor(totalPixels / Math.floor(Math.sqrt(totalPixels * (canvas.width / canvas.height)))));
+            ctx.fillStyle = (i < Math.floor(0.9 * totalPixels)) ? 'red' : 'green';
+            ctx.fillRect(cell.x, cell.y, cellWidth, cellHeight);
         }
     }
-});
+}
+
+window.addEventListener('resize', updateCanvasSize);
