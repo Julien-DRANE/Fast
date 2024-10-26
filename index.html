@@ -35,6 +35,16 @@
             border: none;
             cursor: pointer;
             margin-top: 20px;
+            border-radius: 5px;
+        }
+        #instruction {
+            position: absolute;
+            color: white;
+            font-size: 18px;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
         }
     </style>
 </head>
@@ -42,6 +52,7 @@
     <div id="score">Score: 0</div>
     <canvas id="gameCanvas"></canvas>
     <button id="startButton">Démarrer le Jeu</button>
+    <div id="instruction">Cliquez ou appuyez sur la barre d'espace pour passer au niveau suivant</div>
     <audio id="backgroundMusic" loop>
         <source src="stress_music.mp3" type="audio/mpeg">
         Votre navigateur ne supporte pas la balise audio.
