@@ -18,7 +18,7 @@ html, body {
     width: 100px; /* Largeur du serpent */
     height: 100px; /* Hauteur du serpent */
     background-color: red; /* Couleur du serpent */
-    animation: snakeMove 5s infinite; /* Animation qui bouge le serpent */
+    animation: snakeMove 1s infinite; /* Animation qui bouge le serpent en 1 seconde */
 }
 
 /* Animation du serpent */
