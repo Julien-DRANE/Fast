@@ -10,7 +10,7 @@ html, body {
     width: 100%;
     overflow: hidden;
     font-family: Arial, sans-serif;
-    background-color: white; /* Couleur de fond pour voir le serpent */
+    background-color: black; /* Couleur de fond noire */
 }
 
 #snake {
