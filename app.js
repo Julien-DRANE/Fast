@@ -56,7 +56,8 @@ function handleInput() {
         fillSpeed *= 2; // Double la vitesse
         thickness /= 2; // Divise la largeur par 2
         clearInterval(interval);
-        fillLoop();
+        fillAmount = 0; // Réinitialise la quantité remplie pour le nouveau niveau
+        fillLoop(); // Redémarre la boucle de remplissage
     }
 }
 
