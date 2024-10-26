@@ -48,14 +48,24 @@ function fillLoop() {
     }, 10); // 10ms pour rendre le remplissage fluide
 }
 
-// Écouteur d'événement pour le clic
-canvas.addEventListener('click', () => {
+// Fonction pour gérer le clic ou l'appui sur la barre d'espace
+function handleInput() {
     if (fillAmount >= 93 && fillAmount < 100) {
         score++;
         fillSpeed *= 2; // Double la vitesse
         thickness /= 2; // Divise la largeur par 2
         clearInterval(interval);
         fillLoop();
+    }
+}
+
+// Écouteur d'événement pour le clic
+canvas.addEventListener('click', handleInput);
+
+// Écouteur d'événement pour la barre d'espace
+window.addEventListener('keydown', (event) => {
+    if (event.code === 'Space') {
+        handleInput();
     }
 });
 
