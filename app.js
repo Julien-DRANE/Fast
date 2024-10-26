@@ -8,16 +8,15 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let score = 0;
-let fillAmount = 0;
-let fillSpeed = 1; // Remplit 1% par milliseconde
-let thickness = canvas.width; // Épaisseur initiale
+let fillAmount = 0; // Proportion de remplissage
+let pixelSize = 10; // Taille du pixel (peut être ajustée)
+let fillSpeed = 1; // Remplit 1 pixel par intervalle
 let interval;
 
 // Fonction pour démarrer le jeu
 function startGame() {
     music.play();
     fillAmount = 0;
-    thickness = canvas.width; // Épaisseur revient à la largeur initiale
     scoreDisplay.textContent = `Score: ${score}`;
     canvas.style.display = "block"; // Affiche le canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Efface le canvas
@@ -27,23 +26,35 @@ function startGame() {
 // Boucle de remplissage
 function fillLoop() {
     interval = setInterval(() => {
-        fillAmount += fillSpeed;
+        // Remplit les pixels du bas vers le haut
+        for (let i = 0; i < fillSpeed; i++) {
+            if (fillAmount < (canvas.width * canvas.height) / (pixelSize * pixelSize)) {
+                // Calculer la position du pixel à remplir
+                let x = (fillAmount % (canvas.width / pixelSize)) * pixelSize;
+                let y = Math.floor(fillAmount / (canvas.width / pixelSize)) * pixelSize;
+
+                ctx.fillStyle = 'red';
+                ctx.fillRect(x, canvas.height - (y + pixelSize), pixelSize, pixelSize);
+                fillAmount++;
+            }
+        }
+
+        // Vérifie si on est à 7% avant la fin
+        if (fillAmount >= ((canvas.width * canvas.height) * 0.93) / (pixelSize * pixelSize)) {
+            ctx.fillStyle = 'green';
+            for (let i = fillAmount; i < (canvas.width * canvas.height) / (pixelSize * pixelSize); i++) {
+                let x = (i % (canvas.width / pixelSize)) * pixelSize;
+                let y = Math.floor(i / (canvas.width / pixelSize)) * pixelSize;
+                ctx.fillRect(x, canvas.height - (y + pixelSize), pixelSize, pixelSize);
+            }
+            clearInterval(interval);
+        }
 
         // Vérifie si on atteint 100%
-        if (fillAmount >= 100) {
+        if (fillAmount >= (canvas.width * canvas.height) / (pixelSize * pixelSize)) {
             clearInterval(interval);
             setTimeout(startGame, 1000); // Recommence après 1 seconde
             return;
-        }
-
-        // Dessine la bande rouge
-        ctx.fillStyle = 'red';
-        ctx.fillRect(0, canvas.height - (canvas.height * fillAmount / 100), thickness, canvas.height);
-
-        // Vérifie si on est à 7% avant la fin
-        if (fillAmount >= 93) {
-            ctx.fillStyle = 'green';
-            ctx.fillRect(0, canvas.height - (canvas.height * 100 / 100), thickness, canvas.height);
         }
 
     }, 10); // 10ms pour rendre le remplissage fluide
@@ -51,10 +62,10 @@ function fillLoop() {
 
 // Fonction pour gérer le clic ou l'appui sur la barre d'espace
 function handleInput() {
-    if (fillAmount >= 93 && fillAmount < 100) {
+    if (fillAmount >= ((canvas.width * canvas.height) * 0.93) / (pixelSize * pixelSize) && fillAmount < (canvas.width * canvas.height) / (pixelSize * pixelSize)) {
         score++;
         fillSpeed *= 2; // Double la vitesse
-        thickness /= 2; // Divise la largeur par 2
+        pixelSize /= 2; // Divise la taille du pixel par 2
         clearInterval(interval);
         fillAmount = 0; // Réinitialise la quantité remplie pour le nouveau niveau
         fillLoop(); // Redémarre la boucle de remplissage
