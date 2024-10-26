@@ -2,6 +2,7 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const scoreDisplay = document.getElementById('score');
 const startButton = document.getElementById('startButton');
+const message = document.getElementById('message');
 const instruction = document.getElementById('instruction');
 const music = document.getElementById('backgroundMusic');
 
@@ -14,13 +15,14 @@ let pixels = []; // Tableau des cellules
 let fillIndex = 0; // Index actuel de remplissage
 let isFilling = false;
 let fillStartTime = null;
-const fillDuration = 1000; // Durée de remplissage en millisecondes (1 seconde)
+const initialFillDuration = 1000; // Durée de remplissage en millisecondes (1 seconde)
+let fillDuration = initialFillDuration;
 let fillComplete = false;
 let greenPhase = false;
 let cellWidth = 0;
 let cellHeight = 0;
 
-// Fonction pour créer la grille de pixels, triée du bord vers le centre
+// Fonction pour créer la grille de pixels, triée du centre vers les bords
 function createGrid(totalPixels) {
     pixels = [];
     const aspectRatio = canvas.width / canvas.height;
@@ -44,8 +46,8 @@ function createGrid(totalPixels) {
         }
     }
 
-    // Trier les cellules par distance décroissante (du bord vers le centre)
-    pixels.sort((a, b) => b.distance - a.distance);
+    // Trier les cellules par distance décroissante (du centre vers les bords)
+    pixels.sort((a, b) => a.distance - b.distance);
 }
 
 // Fonction pour démarrer le jeu
@@ -54,10 +56,12 @@ function startGame() {
     score = 0;
     updateScore();
     startButton.style.display = 'none';
+    message.style.display = 'none';
     instruction.style.display = 'none';
     canvas.style.display = 'block';
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     totalPixels = 160;
+    fillDuration = initialFillDuration;
     createGrid(totalPixels);
     fillIndex = 0;
     isFilling = true;
@@ -102,10 +106,10 @@ function fill(timestamp) {
         if (progress < 1) {
             requestAnimationFrame(fill);
         } else {
-            // Si le remplissage est terminé sans atteindre 90%
-            fillComplete = true;
-            isFilling = false;
-            instruction.style.display = 'block';
+            // Si le remplissage est terminé sans que le joueur ait cliqué
+            if (!fillComplete) {
+                gameOver();
+            }
         }
     }
 }
@@ -121,6 +125,7 @@ function handleInput() {
         score++;
         updateScore();
         totalPixels = Math.max(1, Math.floor(totalPixels / 2)); // Diviser le nombre de pixels par deux, minimum 1
+        fillDuration = Math.max(200, Math.floor(fillDuration * 0.9)); // Accélérer la durée de remplissage, minimum 200ms
         createGrid(totalPixels);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         fillIndex = 0;
@@ -131,6 +136,28 @@ function handleInput() {
         instruction.style.display = 'none';
         requestAnimationFrame(fill);
     }
+}
+
+// Fonction pour gérer la fin du jeu
+function gameOver() {
+    isFilling = false;
+    fillComplete = false;
+    greenPhase = false;
+    message.textContent = `Vous avez perdu! Score final: ${score}`;
+    message.style.display = 'block';
+    canvas.style.display = 'none';
+    startButton.style.display = 'block';
+}
+
+// Fonction pour gérer la victoire (si vous voulez ajouter une condition de victoire)
+function gameWin() {
+    isFilling = false;
+    fillComplete = false;
+    greenPhase = false;
+    message.textContent = `Félicitations! Vous avez gagné! Score final: ${score}`;
+    message.style.display = 'block';
+    canvas.style.display = 'none';
+    startButton.style.display = 'block';
 }
 
 // Écouteur d'événement pour le clic
@@ -148,6 +175,8 @@ startButton.addEventListener('click', startGame);
 
 // Fonction pour gérer le redimensionnement de la fenêtre
 function updateCanvasSize() {
+    const oldWidth = canvas.width;
+    const oldHeight = canvas.height;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     if (isFilling || fillComplete) {
