@@ -21,7 +21,7 @@ function loadSounds() {
     for (let i = 1; i <= 16; i++) {
         const fileName = (i < 10) ? `sounds/s0${i}.mp3` : `sounds/s${i}.mp3`;
         const audio = new Audio(fileName);
-        sounds.push(audio); // Ne pas définir le volume ici, le volume sera défini plus tard
+        sounds.push(audio); // Ajouter les sons à la liste
     }
     
     // Charger et jouer le son de fond
@@ -60,7 +60,7 @@ function createPastille(event) {
     const sound2 = sounds[soundIndex2];
 
     // Calculer la taille de la pastille en fonction du volume
-    const pastilleSize = pastilleSizes[volumeLevels[Math.floor(Math.random() * volumeLevels.length)]]; // Taille aléatoire basée sur le volume
+    const pastilleSize = pastilleSizes[volumeLevels[Math.floor(Math.random() * volumeLevels.length)]]; // Taille aléatoire
     const couleur = warmColors[Math.floor(Math.random() * warmColors.length)]; // Couleur chaude aléatoire
     const pastille = document.createElement('div');
     pastille.classList.add('pastille'); // Ajout de la classe d'animation
@@ -80,6 +80,7 @@ function createPastille(event) {
 // Fonction pour jouer un son et animer la pastille
 function playSoundAndAnimatePastille(pastille, sound1, sound2) {
     let currentSound = sound1; // Commencer par le premier son
+    let repetitionCount = 0; // Compteur de répétitions
     const rhythmInterval = 800 * 5; // Diviser l'intervalle par 5
 
     // Définir la fonction pour jouer le son et oscillation
@@ -96,6 +97,25 @@ function playSoundAndAnimatePastille(pastille, sound1, sound2) {
 
         // Osciller la pastille
         oscillatePastille(pastille);
+
+        // Incrémenter le compteur de répétitions
+        repetitionCount++;
+
+        // Changer de sons après 16 répétitions
+        if (repetitionCount === 16) {
+            // Choisir de nouveaux sons aléatoires
+            const newSoundIndex1 = Math.floor(Math.random() * sounds.length);
+            const newSoundIndex2 = (newSoundIndex1 + 1) % sounds.length; // Choisir un autre son
+            sound1 = sounds[newSoundIndex1];
+            sound2 = sounds[newSoundIndex2];
+
+            // Espacer les répétitions d'une blanche (2 secondes à 60 BPM)
+            clearInterval(repeatSound);
+            const newRhythmInterval = 2000; // 2 secondes
+            setTimeout(() => {
+                playSoundAndAnimatePastille(pastille, sound1, sound2); // Relancer avec les nouveaux sons
+            }, newRhythmInterval);
+        }
     }, rhythmInterval);
 
     // Arrêter la répétition lorsque la pastille est retirée
