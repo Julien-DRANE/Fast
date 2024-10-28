@@ -2,7 +2,6 @@ let sounds = [];
 const container = document.getElementById('canvas-container');
 let pastilleCount = 0; // Compteur de pastilles créées
 const maxPastilles = 6; // Nombre maximum de pastilles
-let isPlaying = false; // État pour vérifier si un son est en cours de lecture
 
 // Niveaux de volume (de très faible à faible)
 const volumeLevels = [0.05, 0.1, 0.2, 0.3, 0.5]; // 0.05 = très faible, 0.5 = faible
@@ -42,7 +41,7 @@ function createPastille(event) {
 
     const couleur = `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
     const pastille = document.createElement('div');
-    pastille.classList.add('pastille', 'pastille-animation'); // Ajout de la classe d'animation
+    pastille.classList.add('pastille'); // Ajout de la classe d'animation
     pastille.style.backgroundColor = couleur;
 
     pastille.style.left = `${x}px`; // Positionnement centré
@@ -64,23 +63,16 @@ function playSoundAndAnimatePastille(pastille) {
     sound.currentTime = 0; // Rewind to the start
     sound.play();
 
-    // Appliquer l'animation d'effacement
-    pastille.classList.add('pastille-animation'); // Ajouter l'animation pour l'effacement
-
     // Faire disparaître la pastille après 2 secondes
     setTimeout(() => {
-        pastille.remove(); // Retirer l'élément du DOM
-        pastilleCount--; // Décrémente le compteur de pastilles
-    }, 2000); // Retirer après 2 secondes
-}
-
-// Fonction pour jouer un son d'une tierce descendante
-function pitchThirdDown() {
-    const soundIndex = Math.floor(Math.random() * 16);
-    const sound = sounds[soundIndex];
-    sound.currentTime = 0; // Rewind to the start
-    sound.playbackRate = 0.833; // Pitch d'une tierce descendante (environ 0.833 pour 3 demi-tons)
-    sound.play();
+        pastille.style.transition = 'opacity 0.5s, transform 0.5s'; // Transition pour l'opacité et la transformation
+        pastille.style.opacity = '0'; // Rendre la pastille transparente
+        pastille.style.transform = 'scale(0.5)'; // Réduire la taille
+        setTimeout(() => {
+            pastille.remove(); // Retirer l'élément du DOM
+            pastilleCount--; // Décrémente le compteur de pastilles
+        }, 500); // Retirer après la transition
+    }, 2000); // Disparaître après 2 secondes
 }
 
 // Fonction pour générer un nombre aléatoire
