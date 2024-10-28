@@ -7,6 +7,7 @@ const maxActiveSounds = 5; // Maximum de sons simultanés
 let soundInterval; // Intervalle pour jouer les sons
 let lastSoundIndex = -1; // Pour suivre le dernier son joué
 let isDoubleProcess = false; // Indicateur pour savoir si le processus est doublé
+let clickCount = 0; // Compteur de clics
 
 // Niveaux de volume (de très faible à faible) et tailles correspondantes
 const volumeLevels = [0.05, 0.1, 0.2, 0.3]; // Niveaux de volume doux
@@ -35,11 +36,20 @@ document.addEventListener('click', handleInteraction);
 
 // Fonction de gestion des interactions
 function handleInteraction() {
-    if (activeSounds === 0) { // Si aucun son n'est en cours, démarrer la génération
-        startGenerating();
-    } else if (!isDoubleProcess) { // Si déjà en cours, doubler le processus
-        isDoubleProcess = true;
-        startGenerating(true); // Démarrer le double processus
+    clickCount++; // Incrémenter le compteur de clics
+    if (clickCount === 1) { // Premier clic
+        if (activeSounds === 0) { // Si aucun son n'est en cours, démarrer la génération
+            startGenerating();
+        }
+    } else if (clickCount === 2) { // Deuxième clic
+        if (!isDoubleProcess) { // Si déjà en cours, doubler le processus
+            isDoubleProcess = true;
+            startGenerating(true); // Démarrer le double processus
+        }
+    } else if (clickCount === 3) { // Troisième clic
+        removeWarmPastilles(); // Enlever les pastilles rouges et orange
+    } else if (clickCount === 4) { // Quatrième clic
+        stopGenerating(); // Arrêter le processus
     }
 }
 
@@ -108,6 +118,25 @@ function createPastille(doubleProcess) {
         pastille.style.opacity = '0'; // Rendre la pastille transparente
         pastille.addEventListener('transitionend', () => pastille.remove()); // Retirer la pastille après la transition
     }, 2000); // Disparaît après 2 secondes
+}
+
+// Fonction pour enlever les pastilles rouges et orange
+function removeWarmPastilles() {
+    const pastilles = container.querySelectorAll('.pastille');
+    pastilles.forEach(pastille => {
+        const color = pastille.style.backgroundColor;
+        if (warmColors.includes(color)) {
+            pastille.remove(); // Retirer les pastilles rouges et orange
+        }
+    });
+}
+
+// Fonction pour arrêter la génération
+function stopGenerating() {
+    clearInterval(soundInterval); // Arrêter l'intervalle
+    activeSounds = 0; // Réinitialiser le compteur de sons actifs
+    clickCount = 0; // Réinitialiser le compteur de clics
+    isDoubleProcess = false; // Réinitialiser l'indicateur de processus
 }
 
 // Charger les sons lors du chargement
