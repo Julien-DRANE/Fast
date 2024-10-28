@@ -49,7 +49,7 @@ function startGenerating() {
 
 // Fonction pour obtenir un intervalle aléatoire
 function getRandomInterval() {
-    const intervals = [400, 600, 800, 1000, 1200]; // Intervalles en ms (0.4s, 0.6s, etc.)
+    const intervals = [1000, 1200, 1400, 1600, 1800]; // Espacement augmenté (1 à 1.8s)
     return intervals[Math.floor(Math.random() * intervals.length)];
 }
 
