@@ -2,7 +2,7 @@ let sounds = [];
 const container = document.getElementById('canvas-container');
 let pastilleCount = 0; // Compteur de pastilles créées
 const maxPastilles = 6; // Nombre maximum de pastilles
-const soundToggle = 0; // Compteur pour alterner les sons
+let soundToggle = 0; // Compteur pour alterner les sons
 
 // Charger les sons
 function loadSounds() {
@@ -75,9 +75,8 @@ function createPastille(event) {
 
 // Joue un son à chaque battement
 function playBeat(rhythmInterval) {
-    // Alterner entre les deux sons
-    const soundIndex = soundToggle % 2; // Utilise 0 ou 1 pour alterner
-    const sound = sounds[soundIndex];
+    const soundIndex = soundToggle % 2; // Utiliser 0 ou 1 pour alterner
+    let sound = sounds[soundIndex]; // Déclarer avec let pour permettre la réaffectation
     sound.currentTime = 0; // Rewind to the start
     sound.play();
 
