@@ -83,7 +83,7 @@ function playSoundAndAnimatePastille(pastille, sound1, sound2) {
     currentSound.play();
 
     // Définir les intervalles pour les répétitions
-    const rhythmInterval = 800; // Intervalle entre les répétitions (en ms)
+    const rhythmInterval = 800 / 3; // Diviser l'intervalle par trois
 
     // Créer une fonction pour jouer le son et osciller la pastille
     const repeatSound = setInterval(() => {
