@@ -40,30 +40,31 @@ function createPastille(event) {
     const x = event.touches ? event.touches[0].clientX : event.clientX;
     const y = event.touches ? event.touches[0].clientY : event.clientY;
 
-    const rhythmInterval = random(240, 900); // Ralentir le rythme
-    const size = mapIntervalToSize(rhythmInterval);
-
     const couleur = `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
     const pastille = document.createElement('div');
-    pastille.classList.add('pastille', 'pastille-animation'); // Ajout de la classe d'animation
+    pastille.classList.add('pastille'); // Ajout de la classe d'animation
     pastille.style.backgroundColor = couleur;
 
-    pastille.style.left = `${x - size / 2}px`;
-    pastille.style.top = `${y - size / 2}px`;
-    pastille.style.width = `${size}px`;
-    pastille.style.height = `${size}px`;
+    pastille.style.left = `${x}px`; // Positionnement centré
+    pastille.style.top = `${y}px`; // Positionnement centré
+    pastille.style.width = '50px'; // Taille fixe pour la pastille
+    pastille.style.height = '50px'; // Taille fixe pour la pastille
     container.appendChild(pastille);
     
     // Joue un son
-    playBeat(pastille);
+    playSoundAndAnimatePastille(pastille);
     pastilleCount++; // Incrémente le compteur de pastilles
+}
 
-    // Pitch d'une tierce descendante toutes les 4 pastilles
-    if (pastilleCount % 4 === 0) {
-        pitchThirdDown();
-    }
+// Fonction pour jouer un son et animer la pastille
+function playSoundAndAnimatePastille(pastille) {
+    // Choisir un son aléatoire parmi les sons disponibles
+    const soundIndex = Math.floor(Math.random() * sounds.length);
+    const sound = sounds[soundIndex];
+    sound.currentTime = 0; // Rewind to the start
+    sound.play();
 
-    // Faire disparaître la pastille comme de la fumée
+    // Faire disparaître la pastille après 2 secondes
     setTimeout(() => {
         pastille.style.transition = 'opacity 0.5s, transform 0.5s'; // Transition pour l'opacité et la transformation
         pastille.style.opacity = '0'; // Rendre la pastille transparente
@@ -72,27 +73,7 @@ function createPastille(event) {
             pastille.remove(); // Retirer l'élément du DOM
             pastilleCount--; // Décrémente le compteur de pastilles
         }, 500); // Retirer après la transition
-    }, rhythmInterval * 5); // Disparaître après un certain temps
-
-    // Réapparaître après un certain temps
-    setTimeout(() => {
-        pastille.style.transition = 'opacity 0.5s, transform 0.5s'; // Réinitialiser la transition
-        pastille.style.opacity = '1'; // Rendre la pastille visible
-        pastille.style.transform = 'scale(1)'; // Remettre à la taille d'origine
-        container.appendChild(pastille); // Réajouter la pastille
-    }, rhythmInterval * 5 + 1000); // Réapparaître après 1 seconde
-
-    // Ajouter un mouvement aléatoire pour la pastille
-    animatePastille(pastille);
-}
-
-// Joue un son à chaque battement
-function playBeat(pastille) {
-    // Choisir un son aléatoire parmi les sons disponibles
-    const soundIndex = Math.floor(Math.random() * sounds.length);
-    const sound = sounds[soundIndex];
-    sound.currentTime = 0; // Rewind to the start
-    sound.play();
+    }, 2000); // Disparaître après 2 secondes
 }
 
 // Fonction pour jouer un son d'une tierce descendante
@@ -107,21 +88,6 @@ function pitchThirdDown() {
 // Fonction pour générer un nombre aléatoire
 function random(max) {
     return Math.floor(Math.random() * max);
-}
-
-// Fonction pour mapper l'intervalle de vibration à la taille de la pastille
-function mapIntervalToSize(interval) {
-    return Math.max(50, 200 - interval);
-}
-
-// Animer la pastille pour lui donner un effet vivant
-function animatePastille(pastille) {
-    const vibrate = () => {
-        const offsetX = random(5) - 2; // Déplacement aléatoire en X
-        const offsetY = random(5) - 2; // Déplacement aléatoire en Y
-        pastille.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-    };
-    setInterval(vibrate, 100); // Vibre toutes les 100 ms
 }
 
 // Charger les sons lors du chargement
