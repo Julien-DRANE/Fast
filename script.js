@@ -14,7 +14,7 @@ const pastilleSizes = {
 };
 
 // Couleurs chaudes pour les pastilles
-const warmColors = ['#FF5733', '#FFB300', '#FFEA00', '#FF6F61', '#FFD700'];
+const warmColors = ['#048a81ff', '#06d6a0ff', '#54c6ebff', '#8a89c0ff', '#cda2abff']; // Couleurs fournies
 
 // Charger les sons
 function loadSounds() {
