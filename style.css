@@ -24,17 +24,14 @@ body {
 }
 
 .pastille-animation {
-    animation: fadeInOut 1.5s infinite; /* Animation de rémanence */
+    animation: fadeInOut 2s ease-in-out forwards; /* Animation de rémanence */
 }
 
 @keyframes fadeInOut {
     0% {
-        opacity: 0.5; /* Démarre avec un peu de transparence */
-    }
-    50% {
-        opacity: 0.8; /* Plus opaque à mi-chemin */
+        opacity: 0.8; /* Démarre avec une opacité initiale */
     }
     100% {
-        opacity: 0.5; /* Retourne à la transparence initiale */
+        opacity: 0; /* Retourne à la transparence */
     }
 }
