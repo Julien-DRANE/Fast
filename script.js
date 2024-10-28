@@ -42,7 +42,7 @@ function createPastille(event) {
 
     const couleur = `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
     const pastille = document.createElement('div');
-    pastille.classList.add('pastille'); // Ajout de la classe d'animation
+    pastille.classList.add('pastille', 'pastille-animation'); // Ajout de la classe d'animation
     pastille.style.backgroundColor = couleur;
 
     pastille.style.left = `${x}px`; // Positionnement centré
@@ -64,16 +64,14 @@ function playSoundAndAnimatePastille(pastille) {
     sound.currentTime = 0; // Rewind to the start
     sound.play();
 
+    // Appliquer l'animation d'effacement
+    pastille.classList.add('pastille-animation'); // Ajouter l'animation pour l'effacement
+
     // Faire disparaître la pastille après 2 secondes
     setTimeout(() => {
-        pastille.style.transition = 'opacity 0.5s, transform 0.5s'; // Transition pour l'opacité et la transformation
-        pastille.style.opacity = '0'; // Rendre la pastille transparente
-        pastille.style.transform = 'scale(0.5)'; // Réduire la taille
-        setTimeout(() => {
-            pastille.remove(); // Retirer l'élément du DOM
-            pastilleCount--; // Décrémente le compteur de pastilles
-        }, 500); // Retirer après la transition
-    }, 2000); // Disparaître après 2 secondes
+        pastille.remove(); // Retirer l'élément du DOM
+        pastilleCount--; // Décrémente le compteur de pastilles
+    }, 2000); // Retirer après 2 secondes
 }
 
 // Fonction pour jouer un son d'une tierce descendante
