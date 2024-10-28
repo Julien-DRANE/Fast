@@ -55,7 +55,7 @@ function createPastille(event) {
     container.appendChild(pastille);
     
     // Joue un son
-    playBeat(pastille, rhythmInterval);
+    playBeat(pastille);
     pastilleCount++; // Incrémente le compteur de pastilles
 
     // Pitch d'une tierce descendante toutes les 4 pastilles
@@ -87,7 +87,7 @@ function createPastille(event) {
 }
 
 // Joue un son à chaque battement
-function playBeat(pastille, rhythmInterval) {
+function playBeat(pastille) {
     // Choisir un son aléatoire parmi les sons disponibles
     const soundIndex = Math.floor(Math.random() * sounds.length);
     const sound = sounds[soundIndex];
