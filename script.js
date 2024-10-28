@@ -4,12 +4,16 @@ let pastilleCount = 0; // Compteur de pastilles créées
 const maxPastilles = 6; // Nombre maximum de pastilles
 let isPlaying = false; // État pour vérifier si un son est en cours de lecture
 
+// Niveaux de volume (de très faible à faible)
+const volumeLevels = [0.05, 0.1, 0.2, 0.3, 0.5]; // 0.05 = très faible, 0.5 = faible
+
 // Charger les sons
 function loadSounds() {
     for (let i = 1; i <= 16; i++) {
         const fileName = (i < 10) ? `sounds/s0${i}.mp3` : `sounds/s${i}.mp3`;
         const audio = new Audio(fileName);
-        audio.volume = 0.5; // Ajuster le volume des sons
+        const randomVolumeIndex = Math.floor(Math.random() * volumeLevels.length); // Choisir un volume aléatoire
+        audio.volume = volumeLevels[randomVolumeIndex]; // Ajuster le volume des sons
         sounds.push(audio);
     }
     
@@ -141,4 +145,12 @@ function mapIntervalToSize(interval) {
 // Animer la pastille pour lui donner un effet vivant
 function animatePastille(pastille) {
     const vibrate = () => {
-        const offsetX = 
+        const offsetX = random(5) - 2; // Déplacement aléatoire en X
+        const offsetY = random(5) - 2; // Déplacement aléatoire en Y
+        pastille.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+    };
+    setInterval(vibrate, 100); // Vibre toutes les 100 ms
+}
+
+// Charger les sons lors du chargement
+loadSounds();
