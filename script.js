@@ -1,6 +1,12 @@
 let sounds = [];
 const container = document.getElementById('canvas-container');
-let lastSoundIndex = -1; // Pour suivre le dernier son joué
+let pastilleCount = 0; // Compteur de pastilles créées
+const maxPastilles = 5; // Limite du nombre de pastilles
+let activeSounds = 0; // Compteur de sons actifs
+const maxActiveSounds = 5; // Maximum de sons simultanés
+let soundInterval; // Intervalle pour jouer les sons
+
+// Niveaux de volume (de très faible à faible) et tailles correspondantes
 const volumeLevels = [0.05, 0.1, 0.2, 0.3]; // Niveaux de volume doux
 const pastilleSizes = ['80px', '100px', '120px']; // Tailles de pastilles
 const warmColors = ['#048a81ff', '#06d6a0ff', '#54c6ebff', '#8a89c0ff', '#cda2abff']; // Couleurs fournies
@@ -26,7 +32,18 @@ document.addEventListener('click', handleInteraction);
 
 // Fonction de gestion des interactions
 function handleInteraction() {
-    playSound();
+    if (activeSounds === 0) { // Si aucun son n'est en cours, démarrer la génération
+        startGenerating();
+    }
+}
+
+// Commencer à générer des pastilles et des sons
+function startGenerating() {
+    soundInterval = setInterval(() => {
+        if (activeSounds < maxActiveSounds) { // Vérifie le nombre de sons actifs
+            playSound(); // Joue un son
+        }
+    }, 1000); // Espacement de 1 seconde entre les sons
 }
 
 // Jouer un son
@@ -45,9 +62,15 @@ function playSound() {
     
     currentSound.currentTime = 0; // Remettre à zéro le temps
     currentSound.play(); // Jouer le son
+    activeSounds++; // Incrémenter le compteur de sons actifs
 
     // Créer une pastille
     createPastille();
+
+    // Lorsque le son se termine, décrémenter le compteur de sons actifs
+    currentSound.addEventListener('ended', () => {
+        activeSounds--;
+    });
 }
 
 // Créer une pastille
