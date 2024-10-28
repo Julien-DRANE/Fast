@@ -22,3 +22,10 @@ body {
 .pastille:hover {
     transform: scale(1.1); /* Légère augmentation de taille au survol */
 }
+.trainée {
+    position: absolute;
+    border-radius: 50%; /* Rendre la trainée ronde */
+    filter: blur(8px); /* Effet de flou pour un aspect de trainée */
+    opacity: 0.5; /* Légèrement transparent */
+    transition: opacity 1s; /* Transition pour la disparition */
+}
