@@ -1,12 +1,14 @@
 let sounds = [];
 const container = document.getElementById('canvas-container');
 let pastilleCount = 0; // Compteur de pastilles créées
+const maxPastilles = 6; // Nombre maximum de pastilles
 
 // Charger les sons
 function loadSounds() {
     for (let i = 1; i <= 16; i++) {
         const fileName = (i < 10) ? `sounds/s0${i}.mp3` : `sounds/s${i}.mp3`;
         const audio = new Audio(fileName);
+        audio.volume = 0.5; // Ajuster le volume des sons
         sounds.push(audio);
     }
 }
@@ -17,7 +19,10 @@ document.addEventListener('click', handleInteraction);
 
 // Fonction de gestion des interactions
 function handleInteraction(event) {
-    createPastille(event);
+    // Ne pas créer de nouvelle pastille si le maximum est atteint
+    if (pastilleCount < maxPastilles) {
+        createPastille(event);
+    }
 }
 
 // Créer une pastille
@@ -53,6 +58,17 @@ function createPastille(event) {
         scale = scale === 1 ? 1.2 : 1;
         pastille.style.transform = `scale(${scale})`;
     }, rhythmInterval);
+
+    // Faire disparaître la pastille comme de la fumée
+    setTimeout(() => {
+        pastille.style.transition = 'opacity 0.5s, transform 0.5s'; // Transition pour l'opacité et la transformation
+        pastille.style.opacity = '0'; // Rendre la pastille transparente
+        pastille.style.transform = 'scale(0.5)'; // Réduire la taille
+        setTimeout(() => {
+            pastille.remove(); // Retirer l'élément du DOM
+            pastilleCount--; // Décrémente le compteur de pastilles
+        }, 500); // Retirer après la transition
+    }, rhythmInterval * 5); // Disparaître après un certain temps
 }
 
 // Joue un son à chaque battement
