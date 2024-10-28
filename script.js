@@ -12,6 +12,7 @@ let rainbowMode = false;
 const ripples = [];
 const stars = [];
 let rippleInterval;
+let isTouching = false;
 
 // Créer une pastille de couleur à l'endroit où l'utilisateur touche
 const createRipple = (x, y) => {
@@ -115,18 +116,28 @@ const draw = () => {
 
 // Démarrer la création de pastilles lors du contact
 const startCreatingRipples = (x, y) => {
+    isTouching = true;
     createRipple(x, y);
     createStar(x, y); // Créer une étoile à l'endroit touché
 
     // Créer des pastilles à intervalles réguliers
     rippleInterval = setInterval(() => {
         createRipple(x, y);
-    }, 1000 / 15); // 15 pastilles par seconde
+    }, 1000 / 5); // 5 pastilles par seconde
 };
 
 // Arrêter la création de pastilles lorsque le contact se termine
 const stopCreatingRipples = () => {
     clearInterval(rippleInterval);
+    isTouching = false;
+};
+
+// Mettre à jour la position des pastilles pour suivre le doigt
+const updateRipplePosition = (x, y) => {
+    if (isTouching) {
+        createRipple(x, y);
+        createStar(x, y); // Créer une étoile à l'endroit touché
+    }
 };
 
 // Écouter les événements de touché sur le canvas
@@ -134,6 +145,13 @@ canvas.addEventListener("touchstart", (event) => {
     event.preventDefault();
     const touch = event.touches[0];
     startCreatingRipples(touch.clientX, touch.clientY);
+});
+
+// Mettre à jour la position lors du mouvement
+canvas.addEventListener("touchmove", (event) => {
+    event.preventDefault();
+    const touch = event.touches[0];
+    updateRipplePosition(touch.clientX, touch.clientY);
 });
 
 // Écouter les événements de fin de contact
