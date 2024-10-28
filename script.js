@@ -5,6 +5,13 @@ const maxPastilles = 6; // Nombre maximum de pastilles
 
 // Niveaux de volume (de très faible à faible)
 const volumeLevels = [0.05, 0.1, 0.2, 0.3, 0.5]; // 0.05 = très faible, 0.5 = faible
+const pastilleSizes = {
+    0.05: '30px', // Très faible
+    0.1: '40px',  // Faible
+    0.2: '50px',  // Moyen
+    0.3: '60px',  // Moyen élevé
+    0.5: '70px'   // Élevé
+};
 
 // Charger les sons
 function loadSounds() {
@@ -39,6 +46,11 @@ function createPastille(event) {
     const x = event.touches ? event.touches[0].clientX : event.clientX;
     const y = event.touches ? event.touches[0].clientY : event.clientY;
 
+    const soundIndex = Math.floor(Math.random() * sounds.length);
+    const sound = sounds[soundIndex];
+    
+    // Calculer la taille de la pastille en fonction du volume
+    const pastilleSize = pastilleSizes[sound.volume];
     const couleur = `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
     const pastille = document.createElement('div');
     pastille.classList.add('pastille'); // Ajout de la classe d'animation
@@ -46,20 +58,17 @@ function createPastille(event) {
 
     pastille.style.left = `${x}px`; // Positionnement centré
     pastille.style.top = `${y}px`; // Positionnement centré
-    pastille.style.width = '50px'; // Taille fixe pour la pastille
-    pastille.style.height = '50px'; // Taille fixe pour la pastille
+    pastille.style.width = pastilleSize; // Taille en fonction du volume
+    pastille.style.height = pastilleSize; // Taille en fonction du volume
     container.appendChild(pastille);
     
     // Joue un son
-    playSoundAndAnimatePastille(pastille);
+    playSoundAndAnimatePastille(pastille, sound);
     pastilleCount++; // Incrémente le compteur de pastilles
 }
 
 // Fonction pour jouer un son et animer la pastille
-function playSoundAndAnimatePastille(pastille) {
-    // Choisir un son aléatoire parmi les sons disponibles
-    const soundIndex = Math.floor(Math.random() * sounds.length);
-    const sound = sounds[soundIndex];
+function playSoundAndAnimatePastille(pastille, sound) {
     sound.currentTime = 0; // Rewind to the start
     sound.play();
 
