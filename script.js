@@ -13,14 +13,15 @@ const pastilleSizes = {
     0.5: '180px'   // Élevé
 };
 
+// Couleurs chaudes pour les pastilles
+const warmColors = ['#FF5733', '#FFB300', '#FFEA00', '#FF6F61', '#FFD700'];
+
 // Charger les sons
 function loadSounds() {
     for (let i = 1; i <= 16; i++) {
         const fileName = (i < 10) ? `sounds/s0${i}.mp3` : `sounds/s${i}.mp3`;
         const audio = new Audio(fileName);
-        const randomVolumeIndex = Math.floor(Math.random() * volumeLevels.length); // Choisir un volume aléatoire
-        audio.volume = volumeLevels[randomVolumeIndex]; // Ajuster le volume des sons
-        sounds.push(audio);
+        sounds.push(audio); // Ne pas définir le volume ici, le volume sera défini plus tard
     }
     
     // Charger et jouer le son de fond
@@ -60,7 +61,7 @@ function createPastille(event) {
 
     // Calculer la taille de la pastille en fonction du volume
     const pastilleSize = pastilleSizes[sound1.volume]; // Utiliser le volume du premier son
-    const couleur = `rgb(${random(255)}, ${random(255)}, ${random(255)})`; // Couleur aléatoire
+    const couleur = warmColors[Math.floor(Math.random() * warmColors.length)]; // Couleur chaude aléatoire
     const pastille = document.createElement('div');
     pastille.classList.add('pastille'); // Ajout de la classe d'animation
     pastille.style.backgroundColor = couleur;
