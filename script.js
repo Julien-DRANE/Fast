@@ -1,9 +1,8 @@
-let audioContext;
 let sounds = [];
 const container = document.getElementById('canvas-container');
 let pastilleCount = 0; // Compteur de pastilles créées
 const maxPastilles = 6; // Nombre maximum de pastilles
-const reverb = createReverb(); // Créer un effet de réverbération
+const soundToggle = 0; // Compteur pour alterner les sons
 
 // Charger les sons
 function loadSounds() {
@@ -13,23 +12,6 @@ function loadSounds() {
         audio.volume = 0.5; // Ajuster le volume des sons
         sounds.push(audio);
     }
-}
-
-// Créer un effet de réverbération
-function createReverb() {
-    const convolver = audioContext.createConvolver();
-    const impulseResponse = new Audio('path/to/your/impulse-response.wav'); // Remplace par un vrai chemin vers un fichier WAV de réponse impulsionnelle
-
-    return new Promise((resolve) => {
-        impulseResponse.onended = () => {
-            resolve(convolver);
-        };
-        impulseResponse.play(); // Assurez-vous que l'impulsion est lue
-        const context = new AudioContext();
-        context.decodeAudioData(impulseResponse, (buffer) => {
-            convolver.buffer = buffer;
-        });
-    });
 }
 
 // Écoute les événements tactiles et souris
@@ -63,7 +45,7 @@ function createPastille(event) {
     container.appendChild(pastille);
     
     // Joue un son
-    playBeat(pastille, rhythmInterval);
+    playBeat(rhythmInterval);
     pastilleCount++; // Incrémente le compteur de pastilles
 
     // Pitch d'une tierce descendante toutes les 4 pastilles
@@ -92,11 +74,15 @@ function createPastille(event) {
 }
 
 // Joue un son à chaque battement
-function playBeat(pastille, rhythmInterval) {
-    const soundIndex = Math.floor(Math.random() * 16);
+function playBeat(rhythmInterval) {
+    // Alterner entre les deux sons
+    const soundIndex = soundToggle % 2; // Utilise 0 ou 1 pour alterner
     const sound = sounds[soundIndex];
     sound.currentTime = 0; // Rewind to the start
     sound.play();
+
+    // Passer au prochain son pour la prochaine pastille
+    soundToggle++;
 
     const soundInterval = random(600, 1800); // Ralentir le son
     const adjustedSoundInterval = soundInterval * 5; // Espacer les sons pour un rythme lent
