@@ -11,7 +11,11 @@ body {
     position: relative;
     width: 100vw;
     height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+}
+
+.pastille {
+    position: absolute;
+    border-radius: 50%;
+    transition: transform 0.1s;
+    pointer-events: none; /* Pour que la pastille ne bloque pas les clics */
 }
