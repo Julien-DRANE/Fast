@@ -1,6 +1,6 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-const sound = document.getElementById("sound");
+const soundSrc = "sound.mp3"; // Chemin vers le fichier audio
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -20,7 +20,10 @@ const createRipple = (x, y) => {
     const radius = Math.random() * 30 + 20; // Variation de taille
     ripples.push({ x, y, radius, alpha: 0.8 }); // Définir alpha à 0.8 pour éviter l'effet flash
     changeColor();
-    sound.currentTime = 0; // Réinitialiser le temps pour superposer le son
+    
+    // Jouer le son
+    const sound = new Audio(soundSrc); // Créer une nouvelle instance du son
+    sound.currentTime = 0; // Réinitialiser le temps
     sound.play();
 
     // Retour haptique doux
