@@ -71,6 +71,9 @@ function createPastille(event) {
         pastille.style.transform = 'scale(1)'; // Remettre à la taille d'origine
         container.appendChild(pastille); // Réajouter la pastille
     }, rhythmInterval * 5 + 1000); // Réapparaître après 1 seconde
+
+    // Ajouter un mouvement aléatoire pour la pastille
+    animatePastille(pastille);
 }
 
 // Joue un son à chaque battement
@@ -119,6 +122,16 @@ function random(max) {
 // Fonction pour mapper l'intervalle de vibration à la taille de la pastille
 function mapIntervalToSize(interval) {
     return Math.max(50, 200 - interval);
+}
+
+// Animer la pastille pour lui donner un effet vivant
+function animatePastille(pastille) {
+    const vibrate = () => {
+        const offsetX = random(5) - 2; // Déplacement aléatoire en X
+        const offsetY = random(5) - 2; // Déplacement aléatoire en Y
+        pastille.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+    };
+    setInterval(vibrate, 100); // Vibre toutes les 100 ms
 }
 
 // Charger les sons lors du chargement
