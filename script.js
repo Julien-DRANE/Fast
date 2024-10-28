@@ -44,7 +44,13 @@ function startGenerating() {
         if (activeSounds < maxActiveSounds) { // Vérifie le nombre de sons actifs
             playSound(); // Joue un son
         }
-    }, 800); // Espacement d'une noire pointée à 60 bpm (800 ms)
+    }, getRandomInterval()); // Espacement aléatoire pour créer de la polyrythmie
+}
+
+// Fonction pour obtenir un intervalle aléatoire
+function getRandomInterval() {
+    const intervals = [400, 600, 800, 1000, 1200]; // Intervalles en ms (0.4s, 0.6s, etc.)
+    return intervals[Math.floor(Math.random() * intervals.length)];
 }
 
 // Jouer un son
