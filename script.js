@@ -44,7 +44,8 @@ function startGenerating() {
         if (activeSounds < maxActiveSounds) { // Vérifie le nombre de sons actifs
             playSound(); // Joue un son
         }
-    }, 800); // Espacement d'une noire pointée à 60 bpm (1 seconde)
+    }, 800); // Espacement d'une noire pointée à 60 bpm (800 ms)
+}
 
 // Jouer un son
 function playSound() {
