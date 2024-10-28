@@ -12,8 +12,7 @@ function initAudio() {
 function loadSounds() {
     const promises = [];
     for (let i = 1; i <= 16; i++) {
-        // Gérer les noms de fichiers pour s01 à s10, puis s11 à s16
-        const fileName = (i < 10) ? `sounds/s0${i}.mp3` : `sounds/s${i}.mp3`;
+        const fileName = (i < 10) ? `sounds/s0${i}.mp3` : `sounds/s${i}.mp3`; // Gérer les noms de fichiers
         promises.push(fetch(fileName)
             .then(response => {
                 if (!response.ok) {
@@ -33,11 +32,9 @@ document.addEventListener('click', handleInteraction);
 
 // Fonction de gestion des interactions
 function handleInteraction(event) {
-    // Créer l'audio context si ce n'est pas déjà fait
     if (!audioContext) {
         initAudio();
     }
-    // Appeler createPastille lors de l'interaction
     createPastille(event);
 }
 
@@ -46,7 +43,7 @@ function createPastille(event) {
     const x = event.touches ? event.touches[0].clientX : event.clientX;
     const y = event.touches ? event.touches[0].clientY : event.clientY;
 
-    const rhythmInterval = random(80, 300);
+    const rhythmInterval = random(240, 900); // Ralentir le rythme (anciennement 80, 300)
     const size = mapIntervalToSize(rhythmInterval);
 
     const couleur = `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
@@ -85,7 +82,7 @@ function playBeat(pastille) {
     source.connect(audioContext.destination);
     source.start();
 
-    const soundInterval = random(200, 600);
+    const soundInterval = random(600, 1800); // Ralentir le son (anciennement 200, 600)
     setInterval(() => {
         const source = audioContext.createBufferSource();
         source.buffer = soundBuffer;
