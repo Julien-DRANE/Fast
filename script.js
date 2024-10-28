@@ -1,9 +1,27 @@
+let audioContext;
 let sounds = [];
 const container = document.getElementById('canvas-container');
 
+// Initialiser l'audio context
+function initAudio() {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+}
+
 // Charger les sons
-for (let i = 1; i <= 16; i++) {
-    sounds[i - 1] = new Audio(`sounds/s0${i}.mp3`);
+function loadSounds() {
+    const promises = [];
+    for (let i = 1; i <= 16; i++) {
+        promises.push(fetch(`sounds/s${i}.mp3`) // Utiliser s${i}.mp3 sans zéro devant
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erreur lors du chargement de s${i}.mp3`);
+                }
+                return response.arrayBuffer();
+            })
+            .then(data => audioContext.decodeAudioData(data))
+            .then(buffer => sounds[i - 1] = buffer));
+    }
+    return Promise.all(promises);
 }
 
 // Écoute les événements tactiles et souris
@@ -12,48 +30,55 @@ document.addEventListener('click', createPastille);
 
 // Créer une pastille
 function createPastille(event) {
-    // Utiliser les coordonnées de la souris ou du touché
     const x = event.touches ? event.touches[0].clientX : event.clientX;
     const y = event.touches ? event.touches[0].clientY : event.clientY;
 
-    // Choisir un intervalle de vibration aléatoire
-    const rhythmInterval = random(80, 300); // Intervalle de vibration aléatoire entre 80ms et 300ms
-    const size = mapIntervalToSize(rhythmInterval); // Obtenir la taille basée sur l'intervalle
+    const rhythmInterval = random(80, 300);
+    const size = mapIntervalToSize(rhythmInterval);
 
     const couleur = `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
     const pastille = document.createElement('div');
     pastille.classList.add('pastille');
     pastille.style.backgroundColor = couleur;
 
-    // Positionner la pastille à l'endroit du touché ou du clic
-    pastille.style.left = `${x - size / 2}px`; // Centrer la pastille
-    pastille.style.top = `${y - size / 2}px`;  // Centrer la pastille
-    pastille.style.width = `${size}px`; // Définir la taille
-    pastille.style.height = `${size}px`; // Définir la taille
+    pastille.style.left = `${x - size / 2}px`;
+    pastille.style.top = `${y - size / 2}px`;
+    pastille.style.width = `${size}px`;
+    pastille.style.height = `${size}px`;
     container.appendChild(pastille);
     
     // Joue un son
     playBeat(pastille);
 
-    // Faire battre la pastille à des rythmes différents
     let scale = 1;
     setInterval(() => {
-        scale = scale === 1 ? 1.2 : 1; // Alterne entre 1 et 1.2
+        scale = scale === 1 ? 1.2 : 1;
         pastille.style.transform = `scale(${scale})`;
-    }, rhythmInterval); // Changer de taille selon le rythme
+    }, rhythmInterval);
 }
 
 // Joue un son à chaque battement
 function playBeat(pastille) {
-    const sound = sounds[Math.floor(Math.random() * 16)];
-    sound.currentTime = 0; // Rewind to the start
-    sound.play();
+    const soundIndex = Math.floor(Math.random() * 16);
+    const soundBuffer = sounds[soundIndex];
 
-    // Joue le son de manière répétée à un rythme aléatoire
-    const soundInterval = random(200, 600); // Intervalle de son aléatoire entre 200ms et 600ms
+    const source = audioContext.createBufferSource();
+    source.buffer = soundBuffer;
+
+    // Changer le pitch en modifiant la vitesse de lecture
+    const pitchShift = random(0.8, 1.2); // Pitch shift entre 0.8x et 1.2x
+    source.playbackRate.value = pitchShift; 
+
+    source.connect(audioContext.destination);
+    source.start();
+
+    const soundInterval = random(200, 600);
     setInterval(() => {
-        sound.currentTime = 0; // Rewind to the start
-        sound.play();
+        const source = audioContext.createBufferSource();
+        source.buffer = soundBuffer;
+        source.playbackRate.value = pitchShift;
+        source.connect(audioContext.destination);
+        source.start();
     }, soundInterval);
 }
 
@@ -64,6 +89,9 @@ function random(max) {
 
 // Fonction pour mapper l'intervalle de vibration à la taille de la pastille
 function mapIntervalToSize(interval) {
-    // Plus l'intervalle est grand, plus la pastille est grande
-    return Math.max(50, 200 - interval); // Taille minimum de 50px et maximum de 200px
+    return Math.max(50, 200 - interval);
 }
+
+// Initialisation de l'audio lors du chargement
+initAudio();
+loadSounds();
