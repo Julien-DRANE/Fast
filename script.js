@@ -81,7 +81,7 @@ function createPastille(event) {
 function playSoundAndAnimatePastille(pastille, sound1, sound2) {
     let currentSound = sound1; // Commencer par le premier son
     let repetitionCount = 0; // Compteur de répétitions
-    const rhythmInterval = 800 * 5; // Diviser l'intervalle par 5
+    const rhythmInterval = 800; // Intervalle de base pour les répétitions
 
     // Définir la fonction pour jouer le son et oscillation
     const repeatSound = setInterval(() => {
@@ -91,6 +91,9 @@ function playSoundAndAnimatePastille(pastille, sound1, sound2) {
 
         currentSound.currentTime = 0; // Rewind to the start
         currentSound.play();
+
+        // Créer une nouvelle pastille à chaque répétition
+        createPastille({ clientX: pastille.offsetLeft, clientY: pastille.offsetTop });
 
         // Alterner entre les deux sons
         currentSound = (currentSound === sound1) ? sound2 : sound1;
@@ -109,12 +112,8 @@ function playSoundAndAnimatePastille(pastille, sound1, sound2) {
             sound1 = sounds[newSoundIndex1];
             sound2 = sounds[newSoundIndex2];
 
-            // Espacer les répétitions d'une blanche (2 secondes à 60 BPM)
-            clearInterval(repeatSound);
-            const newRhythmInterval = 2000; // 2 secondes
-            setTimeout(() => {
-                playSoundAndAnimatePastille(pastille, sound1, sound2); // Relancer avec les nouveaux sons
-            }, newRhythmInterval);
+            // Réinitialiser le compteur de répétitions
+            repetitionCount = 0;
         }
     }, rhythmInterval);
 
