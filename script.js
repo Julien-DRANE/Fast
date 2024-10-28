@@ -5,15 +5,17 @@ const sound = document.getElementById("sound");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// Définir la palette de couleurs
-let colors = ["#FFB6C1", "#B0E0E6", "#FFD700", "#98FB98", "#FF69B4", "#ADD8E6"];
+// Définir une nouvelle palette de couleurs douce
+let colors = ["#FFB6C1", "#B0E0E6", "#FFD700", "#98FB98", "#FF69B4", "#ADD8E6", "#FF4500", "#1E90FF"];
 let currentColor = 0;
 let rainbowMode = false;
 const ripples = [];
+const stars = [];
 
 // Créer une pastille de couleur à l'endroit où l'utilisateur touche
 const createRipple = (x, y) => {
-    ripples.push({ x, y, radius: 50, alpha: 1 });
+    const radius = Math.random() * 30 + 20; // Variation de taille
+    ripples.push({ x, y, radius, alpha: 1 });
     changeColor();
     sound.currentTime = 0; // Réinitialiser le temps pour superposer le son
     sound.play();
@@ -22,6 +24,11 @@ const createRipple = (x, y) => {
 // Changer la couleur actuelle
 const changeColor = () => {
     currentColor = (currentColor + 1) % colors.length;
+};
+
+// Ajouter une étoile brillante
+const createStar = (x, y) => {
+    stars.push({ x, y, size: 5, alpha: 1, speed: 1 });
 };
 
 // Effet arc-en-ciel
@@ -55,6 +62,23 @@ const updateRipples = () => {
     }
 };
 
+// Mettre à jour les étoiles brillantes
+const updateStars = () => {
+    for (let i = 0; i < stars.length; i++) {
+        stars[i].size += 0.5; // Augmenter la taille de l'étoile
+        stars[i].alpha -= 0.01; // Diminuer l'opacité
+        stars[i].speed += 0.05; // Augmenter la vitesse
+
+        // Mettre à jour la position de l'étoile
+        stars[i].y -= stars[i].speed;
+
+        if (stars[i].alpha <= 0) {
+            stars.splice(i, 1);
+            i--;
+        }
+    }
+};
+
 // Dessiner sur le canvas
 const draw = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Effacer le canvas chaque image
@@ -67,6 +91,7 @@ const draw = () => {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
+    // Dessiner les pastilles
     ripples.forEach(ripple => {
         ctx.fillStyle = `rgba(${parseInt(colors[currentColor].slice(1, 3), 16)}, ${parseInt(colors[currentColor].slice(3, 5), 16)}, ${parseInt(colors[currentColor].slice(5, 7), 16)}, ${ripple.alpha})`;
         ctx.beginPath();
@@ -74,7 +99,16 @@ const draw = () => {
         ctx.fill();
     });
 
+    // Dessiner les étoiles brillantes
+    stars.forEach(star => {
+        ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`; // Étoile blanche
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2, false);
+        ctx.fill();
+    });
+
     updateRipples();
+    updateStars();
     requestAnimationFrame(draw);
 };
 
@@ -83,6 +117,7 @@ canvas.addEventListener("touchstart", (event) => {
     event.preventDefault();
     const touch = event.touches[0];
     createRipple(touch.clientX, touch.clientY);
+    createStar(touch.clientX, touch.clientY); // Créer une étoile à l'endroit touché
 });
 
 // Changer en mode arc-en-ciel à intervalles réguliers
