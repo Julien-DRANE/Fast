@@ -13,19 +13,30 @@ body {
 .pastille {
     position: absolute;
     border-radius: 50%; /* Rendre la pastille ronde */
-    box-shadow: 0 0 15px rgba(255, 255, 0, 0.8), 0 0 30px rgba(255, 255, 0, 0.6); /* Ombre pour un effet flou et lumineux */
-    opacity: 0.7; /* Légèrement transparent */
-    transition: opacity 0.5s, transform 0.5s; /* Transition pour les changements d'état */
-    filter: blur(4px); /* Effet de flou pour un aspect duveteux */
+    box-shadow: 0 0 30px rgba(255, 165, 0, 0.8), 0 0 60px rgba(255, 165, 0, 0.6); /* Glow intense pour les pastilles chaudes */
+    opacity: 0.8; /* Opacité initiale */
+    transition: transform 1s, opacity 1s; /* Transition pour les changements d'état */
+    animation: fadeOut 2s forwards; /* Animation pour la disparition avec traînée */
 }
 
-.pastille:hover {
-    transform: scale(1.1); /* Légère augmentation de taille au survol */
+/* Animation pour faire disparaître la pastille avec effet de traînée */
+@keyframes fadeOut {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(2); /* Agrandir la pastille pour créer la traînée */
+        opacity: 0;
+    }
 }
-.trainée {
-    position: absolute;
-    border-radius: 50%; /* Rendre la trainée ronde */
-    filter: blur(8px); /* Effet de flou pour un aspect de trainée */
-    opacity: 0.5; /* Légèrement transparent */
-    transition: opacity 1s; /* Transition pour la disparition */
+
+/* Styles pour les pastilles vertes */
+.pastille.green {
+    box-shadow: 0 0 30px rgba(76, 175, 80, 0.8), 0 0 60px rgba(102, 187, 106, 0.6); /* Glow intense pour les pastilles vertes */
+}
+
+/* Optionnel : Légère augmentation de taille au survol */
+.pastille:hover {
+    transform: scale(1.1);
 }
