@@ -5,21 +5,26 @@ const sound = document.getElementById("sound");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+// Définir la palette de couleurs
 let colors = ["#FFB6C1", "#B0E0E6", "#FFD700", "#98FB98", "#FF69B4", "#ADD8E6"];
 let currentColor = 0;
 let rainbowMode = false;
 const ripples = [];
 
+// Créer une pastille de couleur à l'endroit où l'utilisateur touche
 const createRipple = (x, y) => {
     ripples.push({ x, y, radius: 50, alpha: 1 });
     changeColor();
+    sound.currentTime = 0; // Réinitialiser le temps pour superposer le son
     sound.play();
 };
 
+// Changer la couleur actuelle
 const changeColor = () => {
     currentColor = (currentColor + 1) % colors.length;
 };
 
+// Effet arc-en-ciel
 const rainbowEffect = () => {
     rainbowMode = true;
     const rainbowColors = ["#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#00FFFF", "#0000FF", "#4B0082", "#9400D3"];
@@ -38,10 +43,11 @@ const rainbowEffect = () => {
     }, 100);
 };
 
+// Mettre à jour les pastilles de couleur
 const updateRipples = () => {
     for (let i = 0; i < ripples.length; i++) {
-        ripples[i].radius += 2;  // Increase the radius for the ripple effect
-        ripples[i].alpha -= 0.02; // Decrease the opacity
+        ripples[i].radius += 2;  // Augmenter le rayon pour l'effet de pastille
+        ripples[i].alpha -= 0.02; // Diminuer l'opacité
         if (ripples[i].alpha <= 0) {
             ripples.splice(i, 1);
             i--;
@@ -49,8 +55,12 @@ const updateRipples = () => {
     }
 };
 
+// Dessiner sur le canvas
 const draw = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas each frame
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Effacer le canvas chaque image
+
+    ctx.fillStyle = "black"; // Fond noir
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     if (rainbowMode) {
         ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
@@ -68,12 +78,14 @@ const draw = () => {
     requestAnimationFrame(draw);
 };
 
+// Écouter les événements de touché sur le canvas
 canvas.addEventListener("touchstart", (event) => {
     event.preventDefault();
     const touch = event.touches[0];
     createRipple(touch.clientX, touch.clientY);
 });
 
+// Changer en mode arc-en-ciel à intervalles réguliers
 setInterval(() => {
     if (!rainbowMode) {
         rainbowEffect();
