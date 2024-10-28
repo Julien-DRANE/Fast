@@ -5,13 +5,15 @@ const container = document.getElementById('canvas-container');
 // Initialiser l'audio context
 function initAudio() {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    loadSounds(); // Charger les sons après l'initialisation
 }
 
 // Charger les sons
 function loadSounds() {
     const promises = [];
     for (let i = 1; i <= 16; i++) {
-        const fileName = (i < 10) ? `sounds/s0${i}.mp3` : `sounds/s${i}.mp3`; // Utiliser s01.mp3 pour i < 10
+        // Gérer les noms de fichiers pour s01 à s10, puis s11 à s16
+        const fileName = (i < 10) ? `sounds/s0${i}.mp3` : `sounds/s${i}.mp3`;
         promises.push(fetch(fileName)
             .then(response => {
                 if (!response.ok) {
@@ -26,8 +28,18 @@ function loadSounds() {
 }
 
 // Écoute les événements tactiles et souris
-document.addEventListener('touchstart', createPastille);
-document.addEventListener('click', createPastille);
+document.addEventListener('touchstart', handleInteraction);
+document.addEventListener('click', handleInteraction);
+
+// Fonction de gestion des interactions
+function handleInteraction(event) {
+    // Créer l'audio context si ce n'est pas déjà fait
+    if (!audioContext) {
+        initAudio();
+    }
+    // Appeler createPastille lors de l'interaction
+    createPastille(event);
+}
 
 // Créer une pastille
 function createPastille(event) {
@@ -95,4 +107,3 @@ function mapIntervalToSize(interval) {
 
 // Initialisation de l'audio lors du chargement
 initAudio();
-loadSounds();
