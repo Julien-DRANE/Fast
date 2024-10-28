@@ -18,7 +18,7 @@ let isTouching = false;
 // Créer une pastille de couleur à l'endroit où l'utilisateur touche
 const createRipple = (x, y) => {
     const radius = Math.random() * 30 + 20; // Variation de taille
-    ripples.push({ x, y, radius, alpha: 1 });
+    ripples.push({ x, y, radius, alpha: 0.8 }); // Définir alpha à 0.8 pour éviter l'effet flash
     changeColor();
     sound.currentTime = 0; // Réinitialiser le temps pour superposer le son
     sound.play();
@@ -27,7 +27,7 @@ const createRipple = (x, y) => {
 // Créer une pastille qui s'éloigne
 const createMovingPastille = (x, y) => {
     const size = Math.random() * 10 + 5; // Taille aléatoire pour la pastille qui s'éloigne
-    movingPastilles.push({ x, y, size, alpha: 1, speed: 2 });
+    movingPastilles.push({ x, y, size, alpha: 0.8, speed: 2 }); // Définir alpha à 0.8 pour éviter l'effet flash
 };
 
 // Changer la couleur actuelle
