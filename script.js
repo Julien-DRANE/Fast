@@ -18,7 +18,9 @@ function loadSounds() {
     for (let i = 1; i <= 16; i++) {
         const fileName = (i < 10) ? `sounds/s0${i}.mp3` : `sounds/s${i}.mp3`;
         const audio = new Audio(fileName);
-        sounds.push(audio); // Ne pas définir le volume ici, le volume sera défini plus tard
+        const randomVolumeIndex = Math.floor(Math.random() * volumeLevels.length); // Choisir un volume aléatoire
+        audio.volume = volumeLevels[randomVolumeIndex]; // Ajuster le volume des sons
+        sounds.push(audio);
     }
     
     // Charger et jouer le son de fond
@@ -57,7 +59,7 @@ function createPastille(event) {
     const sound2 = sounds[soundIndex2];
 
     // Calculer la taille de la pastille en fonction du volume
-    const pastilleSize = pastilleSizes[sound1.volume || 0.2]; // Utiliser un volume par défaut si non défini
+    const pastilleSize = pastilleSizes[sound1.volume]; // Utiliser le volume du premier son
     const couleur = `rgb(${random(255)}, ${random(255)}, ${random(255)})`; // Couleur aléatoire
     const pastille = document.createElement('div');
     pastille.classList.add('pastille'); // Ajout de la classe d'animation
@@ -77,7 +79,7 @@ function createPastille(event) {
 // Fonction pour jouer un son et animer la pastille
 function playSoundAndAnimatePastille(pastille, sound1, sound2) {
     let currentSound = sound1; // Commencer par le premier son
-    const rhythmInterval = 800 / 3; // Diviser l'intervalle par trois
+    const rhythmInterval = 800 * 5; // Diviser l'intervalle par 5
 
     // Définir la fonction pour jouer le son et oscillation
     const repeatSound = setInterval(() => {
