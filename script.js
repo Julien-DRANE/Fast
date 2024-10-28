@@ -4,7 +4,6 @@ const container = document.getElementById('canvas-container');
 // Charger les sons
 function loadSounds() {
     for (let i = 1; i <= 16; i++) {
-        // Gérer les noms de fichiers pour s01 à s10, puis s11 à s16
         const fileName = (i < 10) ? `sounds/s0${i}.mp3` : `sounds/s${i}.mp3`;
         const audio = new Audio(fileName);
         sounds.push(audio);
@@ -17,7 +16,6 @@ document.addEventListener('click', handleInteraction);
 
 // Fonction de gestion des interactions
 function handleInteraction(event) {
-    // Appeler createPastille lors de l'interaction
     createPastille(event);
 }
 
@@ -41,7 +39,7 @@ function createPastille(event) {
     container.appendChild(pastille);
     
     // Joue un son
-    playBeat();
+    playBeat(pastille, rhythmInterval);
 
     let scale = 1;
     setInterval(() => {
@@ -51,17 +49,19 @@ function createPastille(event) {
 }
 
 // Joue un son à chaque battement
-function playBeat() {
+function playBeat(pastille, rhythmInterval) {
     const soundIndex = Math.floor(Math.random() * 16);
     const sound = sounds[soundIndex];
     sound.currentTime = 0; // Rewind to the start
     sound.play();
 
     const soundInterval = random(600, 1800); // Ralentir le son
+    const adjustedSoundInterval = soundInterval * 1.5; // Espacer les sons pour un rythme lent
+
     setInterval(() => {
         sound.currentTime = 0; // Rewind to the start
         sound.play();
-    }, soundInterval);
+    }, adjustedSoundInterval);
 }
 
 // Fonction pour générer un nombre aléatoire
