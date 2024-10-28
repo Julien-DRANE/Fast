@@ -113,10 +113,23 @@ function createPastille(doubleProcess) {
     pastille.style.height = pastilleSize; // Taille
     container.appendChild(pastille);
     
+    // Faire disparaître la pastille de manière logarithmique
+    let opacity = 0.7; // Opacité initiale
+    const fadeOutInterval = setInterval(() => {
+        opacity *= 0.7; // Diminuer l'opacité logarithmiquement
+        pastille.style.opacity = opacity; // Appliquer la nouvelle opacité
+
+        // Si l'opacité est très faible, retirer la pastille
+        if (opacity < 0.05) {
+            clearInterval(fadeOutInterval); // Arrêter l'intervalle
+            pastille.remove(); // Retirer la pastille
+        }
+    }, 100); // Ajuster la durée de l'intervalle
+
     // Faire disparaître la pastille après un certain temps
     setTimeout(() => {
-        pastille.style.opacity = '0'; // Rendre la pastille transparente
-        pastille.addEventListener('transitionend', () => pastille.remove()); // Retirer la pastille après la transition
+        clearInterval(fadeOutInterval); // Arrêter l'intervalle si le temps écoulé
+        pastille.remove(); // Retirer la pastille
     }, 2000); // Disparaît après 2 secondes
 }
 
