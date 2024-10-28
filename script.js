@@ -8,17 +8,12 @@ canvas.height = window.innerHeight;
 let colors = ["#FFB6C1", "#B0E0E6", "#FFD700", "#98FB98", "#FF69B4", "#ADD8E6"];
 let currentColor = 0;
 let rainbowMode = false;
+const ripples = [];
 
 const createRipple = (x, y) => {
-    ctx.fillStyle = colors[currentColor];
-    ctx.beginPath();
-    ctx.arc(x, y, 50, 0, Math.PI * 2, false);
-    ctx.fill();
-    ctx.globalAlpha = 0.5;
-    ctx.filter = "blur(10px)";
-    ctx.fill();
-    ctx.globalAlpha = 1;
-    ctx.filter = "none";
+    ripples.push({ x, y, radius: 50, alpha: 1 });
+    changeColor();
+    sound.play();
 };
 
 const changeColor = () => {
@@ -43,11 +38,33 @@ const rainbowEffect = () => {
     }, 100);
 };
 
+const updateRipples = () => {
+    for (let i = 0; i < ripples.length; i++) {
+        ripples[i].radius += 2;  // Increase the radius for the ripple effect
+        ripples[i].alpha -= 0.02; // Decrease the opacity
+        if (ripples[i].alpha <= 0) {
+            ripples.splice(i, 1);
+            i--;
+        }
+    }
+};
+
 const draw = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas each frame
+
     if (rainbowMode) {
         ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
+
+    ripples.forEach(ripple => {
+        ctx.fillStyle = `rgba(${parseInt(colors[currentColor].slice(1, 3), 16)}, ${parseInt(colors[currentColor].slice(3, 5), 16)}, ${parseInt(colors[currentColor].slice(5, 7), 16)}, ${ripple.alpha})`;
+        ctx.beginPath();
+        ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2, false);
+        ctx.fill();
+    });
+
+    updateRipples();
     requestAnimationFrame(draw);
 };
 
@@ -55,8 +72,6 @@ canvas.addEventListener("touchstart", (event) => {
     event.preventDefault();
     const touch = event.touches[0];
     createRipple(touch.clientX, touch.clientY);
-    sound.play();
-    changeColor();
 });
 
 setInterval(() => {
