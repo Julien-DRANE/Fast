@@ -5,6 +5,7 @@ const maxPastilles = 5; // Limite du nombre de pastilles
 let activeSounds = 0; // Compteur de sons actifs
 const maxActiveSounds = 5; // Maximum de sons simultanés
 let soundInterval; // Intervalle pour jouer les sons
+let lastSoundIndex = -1; // Pour suivre le dernier son joué
 
 // Niveaux de volume (de très faible à faible) et tailles correspondantes
 const volumeLevels = [0.05, 0.1, 0.2, 0.3]; // Niveaux de volume doux
@@ -16,7 +17,7 @@ function loadSounds() {
     for (let i = 1; i <= 16; i++) {
         const fileName = (i < 10) ? `sounds/s0${i}.mp3` : `sounds/s${i}.mp3`;
         const audio = new Audio(fileName);
-        sounds.push(audio);
+        sounds.push(audio); // Ajouter les sons à la liste
     }
     
     // Charger et jouer le son de fond
