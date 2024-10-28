@@ -1,24 +1,8 @@
-body {
-    margin: 0;
-    background-color: black; /* Fond noir */
-    overflow: hidden; /* Empêche le défilement */
-}
-
-#canvas-container {
-    position: relative;
-    width: 100%;
-    height: 100vh; /* Prendre toute la hauteur de la fenêtre */
-}
-
 .pastille {
     position: absolute;
     border-radius: 50%; /* Rendre la pastille ronde */
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6); /* Ombre pour un effet flou et lumineux */
+    box-shadow: 0 0 15px rgba(255, 255, 0, 0.8), 0 0 30px rgba(255, 255, 0, 0.6); /* Ombre pour un effet flou et lumineux */
     opacity: 0.7; /* Légèrement transparent */
     transition: opacity 0.5s, transform 0.5s; /* Transition pour les changements d'état */
-    filter: blur(2px); /* Effet de flou pour un aspect duveteux */
-}
-
-.pastille:hover {
-    transform: scale(1.1); /* Légère augmentation de taille au survol */
+    filter: blur(4px); /* Effet de flou pour un aspect duveteux */
 }
