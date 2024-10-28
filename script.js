@@ -73,19 +73,19 @@ function playSoundAndAnimatePastille(pastille, sound) {
     sound.play();
 
     // Répéter le son à un rythme lent
-    const rhythmInterval = 800 / 3; // Diviser par trois le tempo (en ms)
+    const rhythmInterval = 800; // Intervalle entre les répétitions (en ms)
     
     const repeatSound = setInterval(() => {
         sound.currentTime = 0; // Rewind to the start
         sound.play();
 
-        // Réapparaître la pastille à chaque répétition
+        // Créer une nouvelle pastille décalée
         const newPastille = document.createElement('div');
         const couleur = `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
         newPastille.classList.add('pastille');
         newPastille.style.backgroundColor = couleur;
-        newPastille.style.left = `${pastille.offsetLeft}px`; // Positionnement centré
-        newPastille.style.top = `${pastille.offsetTop}px`; // Positionnement centré
+        newPastille.style.left = `${pastille.offsetLeft + 10}px`; // Décalage léger à droite
+        newPastille.style.top = `${pastille.offsetTop + 10}px`; // Décalage léger vers le bas
         newPastille.style.width = pastille.style.width; // Taille en fonction du volume
         newPastille.style.height = pastille.style.height; // Taille en fonction du volume
         container.appendChild(newPastille);
