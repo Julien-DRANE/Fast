@@ -1,70 +1,49 @@
 let sounds = [];
-let pastilles = [];
-let tempo = 80; // BPM
-let interval;
-let lastBeatTime = 0;
+const tempo = 80; // BPM
+const container = document.getElementById('canvas-container');
 
-function preload() {
-    for (let i = 1; i <= 16; i++) {
-        sounds[i - 1] = loadSound(`sounds/s0${i}.mp3`);
-    }
+// Charger les sons
+for (let i = 1; i <= 16; i++) {
+    sounds[i - 1] = new Audio(`sounds/s0${i}.mp3`);
 }
 
-function setup() {
-    createCanvas(windowWidth, windowHeight);
-    background(240);
+// Événement tactile
+document.addEventListener('touchstart', createPastille);
+
+// Créer une pastille
+function createPastille(event) {
+    const couleur = `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
+    const pastille = document.createElement('div');
+    pastille.classList.add('pastille');
+    pastille.style.backgroundColor = couleur;
+
+    // Positionner la pastille à l'endroit du touché
+    const touch = event.touches[0];
+    pastille.style.left = `${touch.clientX - 25}px`;
+    pastille.style.top = `${touch.clientY - 25}px`;
+    pastille.style.width = '50px';
+    pastille.style.height = '50px';
+    container.appendChild(pastille);
     
-    // Écouter l'événement de touch
-    canvas.addEventListener('touchstart', createPastille);
-    
-    // Configurer le tempo
-    interval = setInterval(playBeat, 60000 / tempo);
+    // Joue un son
+    playBeat();
+
+    // Faire battre la pastille
+    let scale = 1;
+    setInterval(() => {
+        scale = scale === 1 ? 1.2 : 1; // Alterne entre 1 et 1.2
+        pastille.style.transform = `scale(${scale})`;
+    }, 100); // Changer de taille toutes les 100ms
 }
 
-function draw() {
-    background(240);
-    for (let i = 0; i < pastilles.length; i++) {
-        pastilles[i].update();
-        pastilles[i].display();
-    }
-}
-
-function createPastille() {
-    let couleur = color(random(255), random(255), random(255));
-    let pastille = new Pastille(random(width), random(height), couleur);
-    pastilles.push(pastille);
-}
-
+// Joue un son à chaque battement
 function playBeat() {
-    lastBeatTime = millis();
-    for (let i = 0; i < pastilles.length; i++) {
-        if (pastilles[i].isActive) {
-            sounds[floor(random(0, 16))].play();
-        }
-    }
+    const sound = sounds[Math.floor(Math.random() * 16)];
+    sound.currentTime = 0; // Rewind to the start
+    sound.play();
 }
 
-class Pastille {
-    constructor(x, y, couleur) {
-        this.x = x;
-        this.y = y;
-        this.size = 50;
-        this.couleur = couleur;
-        this.isActive = true;
-        this.battement = 0;
-    }
-    
-    update() {
-        this.battement = sin((millis() - lastBeatTime) * 0.01) * 10;
-    }
-    
-    display() {
-        fill(this.couleur);
-        noStroke();
-        ellipse(this.x, this.y, this.size + this.battement, this.size + this.battement);
-    }
-}
-
-function windowResized() {
-    resizeCanvas(windowWidth, windowHeight);
+// Fonction pour générer un nombre aléatoire
+function random(max) {
+    return Math.floor(Math.random() * max);
 }
