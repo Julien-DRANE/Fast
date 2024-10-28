@@ -53,14 +53,12 @@ function createPastille(event) {
     const x = event.touches ? event.touches[0].clientX : event.clientX;
     const y = event.touches ? event.touches[0].clientY : event.clientY;
 
-    const soundIndex1 = Math.floor(Math.random() * sounds.length);
-    const soundIndex2 = (soundIndex1 + 1) % sounds.length; // Choisir un autre son
-    const sound1 = sounds[soundIndex1];
-    const sound2 = sounds[soundIndex2];
+    const soundIndex = Math.floor(Math.random() * sounds.length);
+    const sound = sounds[soundIndex];
 
     // Calculer la taille de la pastille en fonction du volume
-    const pastilleSize = pastilleSizes[sound1.volume];
-    const couleur = `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
+    const pastilleSize = pastilleSizes[sound.volume];
+    const couleur = `rgb(${random(255)}, ${random(255)}, ${random(255)})`; // Couleur aléatoire
     const pastille = document.createElement('div');
     pastille.classList.add('pastille'); // Ajout de la classe d'animation
     pastille.style.backgroundColor = couleur;
@@ -71,31 +69,26 @@ function createPastille(event) {
     pastille.style.height = pastilleSize; // Taille en fonction du volume
     container.appendChild(pastille);
     
-    // Joue le son avec une alternance
-    playSoundAndAnimatePastille(pastille, sound1, sound2);
+    // Joue le son et configure la répétition
+    playSoundAndAnimatePastille(pastille, sound);
     pastilleCount++; // Incrémente le compteur de pastilles
 }
 
 // Fonction pour jouer un son et animer la pastille
-function playSoundAndAnimatePastille(pastille, sound1, sound2) {
-    let currentSound = sound1; // Commencer par le premier son
-    currentSound.currentTime = 0; // Rewind to the start
-    currentSound.play();
+function playSoundAndAnimatePastille(pastille, sound) {
+    sound.currentTime = 0; // Rewind to the start
+    sound.play();
 
-    // Définir les intervalles pour les répétitions
-    const intervals = [1000, 1500, 500]; // 1000 ms pour la noire, 1500 ms pour la noire pointée, 500 ms pour le triolet de noire
-    let intervalIndex = 0;
-
+    // Répéter le son à un rythme lent
+    const rhythmInterval = 800; // Intervalle entre les répétitions (en ms)
+    
     const repeatSound = setInterval(() => {
-        currentSound.currentTime = 0; // Rewind to the start
-        currentSound.play();
-
-        // Alterner entre les deux sons
-        currentSound = (currentSound === sound1) ? sound2 : sound1;
+        sound.currentTime = 0; // Rewind to the start
+        sound.play();
 
         // Créer une nouvelle pastille décalée
         const newPastille = document.createElement('div');
-        const couleur = `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
+        const couleur = pastille.style.backgroundColor; // Utiliser la même couleur
         newPastille.classList.add('pastille');
         newPastille.style.backgroundColor = couleur;
         newPastille.style.left = `${pastille.offsetLeft + 10}px`; // Décalage léger à droite
@@ -114,14 +107,14 @@ function playSoundAndAnimatePastille(pastille, sound1, sound2) {
             }, 500); // Retirer après la transition
         }, 2000); // Disparaître après 2 secondes
 
-    }, intervals[intervalIndex]); // Démarrer avec l'intervalle de la première pastille
+    }, rhythmInterval);
 
     // Arrêter la répétition après 10 répétitions (ou selon ton besoin)
     setTimeout(() => {
         clearInterval(repeatSound);
         pastille.remove(); // Retirer la pastille initiale
         pastilleCount--; // Décrémente le compteur de pastilles
-    }, 10 * intervals[intervalIndex]); // Arrêter après 10 répétitions
+    }, 10 * rhythmInterval); // Arrêter après 10 répétitions
 }
 
 // Fonction pour générer un nombre aléatoire
