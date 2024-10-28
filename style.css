@@ -41,8 +41,8 @@ body {
     position: absolute;
     border-radius: 50%; /* Rendre la traînée ronde */
     opacity: 0.5; /* Légèrement transparent */
-    width: 45px; /* Augmenter la largeur de la traînée */
-    height: 500px; /* Augmenter la hauteur de la traînée */
+    width: 15px; /* Largeur de la traînée */
+    height: 100px; /* Hauteur de la traînée */
     animation: moveUp 3s forwards; /* Animation pour le mouvement vers le haut, plus longue */
     background-color: rgba(255, 255, 0, 0.8); /* Couleur de la traînée */
 }
@@ -57,6 +57,7 @@ body {
         opacity: 0; /* Disparaît progressivement */
     }
 }
+
 /* Optionnel : Légère augmentation de taille au survol */
 .pastille:hover {
     transform: scale(1.1);
