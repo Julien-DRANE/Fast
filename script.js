@@ -2,6 +2,7 @@ let sounds = [];
 const container = document.getElementById('canvas-container');
 let pastilleCount = 0; // Compteur de pastilles créées
 const maxPastilles = 6; // Nombre maximum de pastilles
+let clockInterval; // Intervalle pour l'horloge
 
 // Charger les sons
 function loadSounds() {
@@ -80,15 +81,23 @@ function playBeat(pastille, rhythmInterval) {
     sound.currentTime = 0; // Rewind to the start
     sound.play();
 
-    const soundInterval = random(600, 1800); // Ralentir le son
-    const adjustedSoundInterval = soundInterval * 5; // Espacer les sons pour un rythme lent
+    // Calculer les intervalles des sons pour la polyrythmie
+    const beatInterval = 600; // Intervalle principal en ms
+    const secondaryBeatInterval = beatInterval * 2; // Intervalle secondaire
 
+    // Fonction pour jouer les sons
     setInterval(() => {
         const soundIndex = Math.floor(Math.random() * sounds.length); // Nouveau son à chaque intervalle
         const sound = sounds[soundIndex];
         sound.currentTime = 0; // Rewind to the start
         sound.play();
-    }, adjustedSoundInterval);
+    }, secondaryBeatInterval); // Jouer un son à chaque intervalle secondaire
+
+    // Jouer le son principal à l'intervalle principal
+    setInterval(() => {
+        sound.currentTime = 0; // Rewind to the start
+        sound.play();
+    }, beatInterval);
 }
 
 // Fonction pour jouer un son d'une tierce descendante
