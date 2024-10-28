@@ -85,35 +85,37 @@ function playSoundAndAnimatePastille(pastille, sound1, sound2) {
 
     // Définir la fonction pour jouer le son et oscillation
     const repeatSound = setInterval(() => {
-        // Choisir un volume aléatoire parmi les niveaux de volume
-        const randomVolume = volumeLevels[Math.floor(Math.random() * volumeLevels.length)];
-        currentSound.volume = randomVolume; // Appliquer le volume aléatoire
+        if (pastilleCount <= maxPastilles) { // Vérifie si le nombre de pastilles est correct
+            // Choisir un volume aléatoire parmi les niveaux de volume
+            const randomVolume = volumeLevels[Math.floor(Math.random() * volumeLevels.length)];
+            currentSound.volume = randomVolume; // Appliquer le volume aléatoire
 
-        currentSound.currentTime = 0; // Rewind to the start
-        currentSound.play();
+            currentSound.currentTime = 0; // Rewind to the start
+            currentSound.play();
 
-        // Créer une nouvelle pastille à chaque répétition
-        createPastille({ clientX: pastille.offsetLeft, clientY: pastille.offsetTop });
+            // Créer une nouvelle pastille à chaque répétition
+            createPastille({ clientX: pastille.offsetLeft, clientY: pastille.offsetTop });
 
-        // Alterner entre les deux sons
-        currentSound = (currentSound === sound1) ? sound2 : sound1;
+            // Alterner entre les deux sons
+            currentSound = (currentSound === sound1) ? sound2 : sound1;
 
-        // Osciller la pastille
-        oscillatePastille(pastille);
+            // Osciller la pastille
+            oscillatePastille(pastille);
 
-        // Incrémenter le compteur de répétitions
-        repetitionCount++;
+            // Incrémenter le compteur de répétitions
+            repetitionCount++;
 
-        // Changer de sons après 16 répétitions
-        if (repetitionCount === 16) {
-            // Choisir de nouveaux sons aléatoires
-            const newSoundIndex1 = Math.floor(Math.random() * sounds.length);
-            const newSoundIndex2 = (newSoundIndex1 + 1) % sounds.length; // Choisir un autre son
-            sound1 = sounds[newSoundIndex1];
-            sound2 = sounds[newSoundIndex2];
+            // Changer de sons après 16 répétitions
+            if (repetitionCount === 16) {
+                // Choisir de nouveaux sons aléatoires
+                const newSoundIndex1 = Math.floor(Math.random() * sounds.length);
+                const newSoundIndex2 = (newSoundIndex1 + 1) % sounds.length; // Choisir un autre son
+                sound1 = sounds[newSoundIndex1];
+                sound2 = sounds[newSoundIndex2];
 
-            // Réinitialiser le compteur de répétitions
-            repetitionCount = 0;
+                // Réinitialiser le compteur de répétitions
+                repetitionCount = 0;
+            }
         }
     }, rhythmInterval);
 
