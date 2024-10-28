@@ -44,7 +44,7 @@ const createRipple = (x, y) => {
 
 // Créer une pastille qui s'éloigne
 const createMovingPastille = (x, y) => {
-    const size = Math.random() * 10 + 5; // Taille aléatoire pour la pastille qui s'éloigne
+    const size = Math.random() * 10 + 1; // Taille aléatoire pour la pastille qui s'éloigne
     movingPastilles.push({ x, y, size, alpha: 0.8, speed: 2 }); // Définir alpha à 0.8 pour éviter l'effet flash
 };
 
@@ -55,7 +55,7 @@ const changeColor = () => {
 
 // Ajouter une étoile brillante
 const createStar = (x, y) => {
-    const size = Math.random() * 5 + 2; // Taille aléatoire pour l'étoile
+    const size = Math.random() * 5 + 1; // Taille aléatoire pour l'étoile
     stars.push({ x, y, size, alpha: 1, speed: 1 });
 };
 
