@@ -18,9 +18,7 @@ function loadSounds() {
     for (let i = 1; i <= 16; i++) {
         const fileName = (i < 10) ? `sounds/s0${i}.mp3` : `sounds/s${i}.mp3`;
         const audio = new Audio(fileName);
-        const randomVolumeIndex = Math.floor(Math.random() * volumeLevels.length); // Choisir un volume aléatoire
-        audio.volume = volumeLevels[randomVolumeIndex]; // Ajuster le volume des sons
-        sounds.push(audio);
+        sounds.push(audio); // Ne pas définir le volume ici, le volume sera défini plus tard
     }
     
     // Charger et jouer le son de fond
@@ -59,7 +57,7 @@ function createPastille(event) {
     const sound2 = sounds[soundIndex2];
 
     // Calculer la taille de la pastille en fonction du volume
-    const pastilleSize = pastilleSizes[sound1.volume];
+    const pastilleSize = pastilleSizes[sound1.volume || 0.2]; // Utiliser un volume par défaut si non défini
     const couleur = `rgb(${random(255)}, ${random(255)}, ${random(255)})`; // Couleur aléatoire
     const pastille = document.createElement('div');
     pastille.classList.add('pastille'); // Ajout de la classe d'animation
@@ -79,22 +77,22 @@ function createPastille(event) {
 // Fonction pour jouer un son et animer la pastille
 function playSoundAndAnimatePastille(pastille, sound1, sound2) {
     let currentSound = sound1; // Commencer par le premier son
-    currentSound.currentTime = 0; // Rewind to the start
-    currentSound.play();
-
-    // Définir les intervalles pour les répétitions
     const rhythmInterval = 800 / 3; // Diviser l'intervalle par trois
 
-    // Créer une fonction pour jouer le son et osciller la pastille
+    // Définir la fonction pour jouer le son et oscillation
     const repeatSound = setInterval(() => {
-        // Alterner entre les deux sons
+        // Choisir un volume aléatoire parmi les niveaux de volume
+        const randomVolume = volumeLevels[Math.floor(Math.random() * volumeLevels.length)];
+        currentSound.volume = randomVolume; // Appliquer le volume aléatoire
+
         currentSound.currentTime = 0; // Rewind to the start
         currentSound.play();
+
+        // Alterner entre les deux sons
         currentSound = (currentSound === sound1) ? sound2 : sound1;
 
         // Osciller la pastille
         oscillatePastille(pastille);
-
     }, rhythmInterval);
 
     // Arrêter la répétition lorsque la pastille est retirée
