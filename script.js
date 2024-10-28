@@ -180,6 +180,19 @@ canvas.addEventListener("touchstart", (event) => {
     startCreatingRipples(touch.clientX, touch.clientY);
 });
 
+// Écouter les événements de souris
+canvas.addEventListener("mousedown", (event) => {
+    startCreatingRipples(event.clientX, event.clientY);
+});
+
+canvas.addEventListener("mousemove", (event) => {
+    updateRipplePosition(event.clientX, event.clientY);
+});
+
+canvas.addEventListener("mouseup", (event) => {
+    stopCreatingRipples();
+});
+
 // Mettre à jour la position lors du mouvement
 canvas.addEventListener("touchmove", (event) => {
     event.preventDefault();
