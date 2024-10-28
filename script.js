@@ -11,6 +11,7 @@ let currentColor = 0;
 let rainbowMode = false;
 const ripples = [];
 const stars = [];
+let rippleInterval;
 
 // Créer une pastille de couleur à l'endroit où l'utilisateur touche
 const createRipple = (x, y) => {
@@ -112,12 +113,32 @@ const draw = () => {
     requestAnimationFrame(draw);
 };
 
+// Démarrer la création de pastilles lors du contact
+const startCreatingRipples = (x, y) => {
+    createRipple(x, y);
+    createStar(x, y); // Créer une étoile à l'endroit touché
+
+    // Créer des pastilles à intervalles réguliers
+    rippleInterval = setInterval(() => {
+        createRipple(x, y);
+    }, 1000 / 15); // 15 pastilles par seconde
+};
+
+// Arrêter la création de pastilles lorsque le contact se termine
+const stopCreatingRipples = () => {
+    clearInterval(rippleInterval);
+};
+
 // Écouter les événements de touché sur le canvas
 canvas.addEventListener("touchstart", (event) => {
     event.preventDefault();
     const touch = event.touches[0];
-    createRipple(touch.clientX, touch.clientY);
-    createStar(touch.clientX, touch.clientY); // Créer une étoile à l'endroit touché
+    startCreatingRipples(touch.clientX, touch.clientY);
+});
+
+// Écouter les événements de fin de contact
+canvas.addEventListener("touchend", (event) => {
+    stopCreatingRipples();
 });
 
 // Changer en mode arc-en-ciel à intervalles réguliers
