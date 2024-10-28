@@ -44,8 +44,7 @@ function startGenerating() {
         if (activeSounds < maxActiveSounds) { // Vérifie le nombre de sons actifs
             playSound(); // Joue un son
         }
-    }, 1000); // Espacement de 1 seconde entre les sons
-}
+    }, 800); // Espacement d'une noire pointée à 60 bpm (1 seconde)
 
 // Jouer un son
 function playSound() {
@@ -76,8 +75,8 @@ function playSound() {
 
 // Créer une pastille
 function createPastille() {
-    const x = Math.random() * window.innerWidth; // Position X aléatoire
-    const y = Math.random() * window.innerHeight; // Position Y aléatoire
+    const x = Math.random() * (window.innerWidth - 120); // Position X aléatoire, 120 pour éviter le débordement
+    const y = Math.random() * (window.innerHeight - 120); // Position Y aléatoire, 120 pour éviter le débordement
     const couleur = warmColors[Math.floor(Math.random() * warmColors.length)]; // Couleur chaude aléatoire
     const pastilleSize = pastilleSizes[Math.floor(Math.random() * pastilleSizes.length)]; // Taille aléatoire
 
