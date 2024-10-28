@@ -1,7 +1,9 @@
+let audioContext;
 let sounds = [];
 const container = document.getElementById('canvas-container');
 let pastilleCount = 0; // Compteur de pastilles créées
 const maxPastilles = 6; // Nombre maximum de pastilles
+const reverb = createReverb(); // Créer un effet de réverbération
 
 // Charger les sons
 function loadSounds() {
@@ -13,13 +15,29 @@ function loadSounds() {
     }
 }
 
+// Créer un effet de réverbération
+function createReverb() {
+    const convolver = audioContext.createConvolver();
+    const impulseResponse = new Audio('path/to/your/impulse-response.wav'); // Remplace par un vrai chemin vers un fichier WAV de réponse impulsionnelle
+
+    return new Promise((resolve) => {
+        impulseResponse.onended = () => {
+            resolve(convolver);
+        };
+        impulseResponse.play(); // Assurez-vous que l'impulsion est lue
+        const context = new AudioContext();
+        context.decodeAudioData(impulseResponse, (buffer) => {
+            convolver.buffer = buffer;
+        });
+    });
+}
+
 // Écoute les événements tactiles et souris
 document.addEventListener('touchstart', handleInteraction);
 document.addEventListener('click', handleInteraction);
 
 // Fonction de gestion des interactions
 function handleInteraction(event) {
-    // Ne pas créer de nouvelle pastille si le maximum est atteint
     if (pastilleCount < maxPastilles) {
         createPastille(event);
     }
@@ -53,12 +71,6 @@ function createPastille(event) {
         pitchThirdDown();
     }
 
-    let scale = 1;
-    setInterval(() => {
-        scale = scale === 1 ? 1.2 : 1;
-        pastille.style.transform = `scale(${scale})`;
-    }, rhythmInterval);
-
     // Faire disparaître la pastille comme de la fumée
     setTimeout(() => {
         pastille.style.transition = 'opacity 0.5s, transform 0.5s'; // Transition pour l'opacité et la transformation
@@ -69,6 +81,14 @@ function createPastille(event) {
             pastilleCount--; // Décrémente le compteur de pastilles
         }, 500); // Retirer après la transition
     }, rhythmInterval * 5); // Disparaître après un certain temps
+
+    // Réapparaître après un certain temps
+    setTimeout(() => {
+        pastille.style.transition = 'opacity 0.5s, transform 0.5s'; // Réinitialiser la transition
+        pastille.style.opacity = '1'; // Rendre la pastille visible
+        pastille.style.transform = 'scale(1)'; // Remettre à la taille d'origine
+        container.appendChild(pastille); // Réajouter la pastille
+    }, rhythmInterval * 5 + 1000); // Réapparaître après 1 seconde
 }
 
 // Joue un son à chaque battement
