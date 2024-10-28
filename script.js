@@ -30,7 +30,8 @@ const changeColor = () => {
 
 // Ajouter une étoile brillante
 const createStar = (x, y) => {
-    stars.push({ x, y, size: 5, alpha: 1, speed: 1 });
+    const size = Math.random() * 5 + 2; // Taille aléatoire pour l'étoile
+    stars.push({ x, y, size, alpha: 1, speed: 1 });
 };
 
 // Effet arc-en-ciel
