@@ -56,7 +56,7 @@ function createPastille(event) {
     // Faire disparaître la pastille comme de la fumée
     setTimeout(() => {
         pastille.style.transition = 'opacity 0.5s, transform 0.5s'; // Transition pour l'opacité et la transformation
-        pastille.style.opacity = '0'; // Rendre la pastille transparente
+        pastille.style.opacity = '0.8'; // Rendre la pastille transparente
         pastille.style.transform = 'scale(0.5)'; // Réduire la taille
         setTimeout(() => {
             pastille.remove(); // Retirer l'élément du DOM
@@ -91,18 +91,29 @@ function playBeat(pastille, rhythmInterval) {
         isPlaying = false; // Remettre à faux lorsque le son est terminé
     };
 
-    const soundInterval = random(600, 1800); // Ralentir le son
-    const adjustedSoundInterval = soundInterval * 10; // Espacer les sons pour un rythme lent
+    // Calculer les intervalles des sons pour la polyrythmie
+    const beatInterval = 600; // Intervalle principal en ms
+    const secondaryBeatInterval = beatInterval * 2; // Intervalle secondaire
 
-    // Jouer le son avec un rythme syncopé
-    setTimeout(() => {
-        if (!isPlaying) { // S'assurer qu'un son n'est pas déjà joué
-            const nextSoundIndex = Math.floor(Math.random() * sounds.length);
-            const nextSound = sounds[nextSoundIndex];
-            nextSound.currentTime = 0; // Rewind to the start
-            nextSound.play();
+    // Jouer le son principal à l'intervalle principal
+    setInterval(() => {
+        if (!isPlaying) { // Ne pas jouer si un son est déjà en cours
+            const soundIndex = Math.floor(Math.random() * sounds.length); // Nouveau son à chaque intervalle
+            const sound = sounds[soundIndex];
+            sound.currentTime = 0; // Rewind to the start
+            sound.play();
         }
-    }, adjustedSoundInterval); // Tempo syncopé
+    }, beatInterval);
+
+    // Jouer le son secondaire à l'intervalle secondaire
+    setInterval(() => {
+        if (!isPlaying) { // Ne pas jouer si un son est déjà en cours
+            const soundIndex = Math.floor(Math.random() * sounds.length); // Nouveau son à chaque intervalle
+            const sound = sounds[soundIndex];
+            sound.currentTime = 0; // Rewind to the start
+            sound.play();
+        }
+    }, secondaryBeatInterval);
 }
 
 // Fonction pour jouer un son d'une tierce descendante
