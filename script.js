@@ -12,6 +12,12 @@ function loadSounds() {
         audio.volume = 0.5; // Ajuster le volume des sons
         sounds.push(audio);
     }
+    
+    // Charger et jouer le son de fond
+    const backgroundSound = new Audio('sounds/nature.mp3'); // Chemin vers le fichier audio
+    backgroundSound.loop = true; // Faire jouer le son en boucle
+    backgroundSound.volume = 0.2; // Ajuster le volume à un niveau bas
+    backgroundSound.play(); // Jouer le son de fond
 }
 
 // Écoute les événements tactiles et souris
