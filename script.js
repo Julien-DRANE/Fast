@@ -22,6 +22,11 @@ const createRipple = (x, y) => {
     changeColor();
     sound.currentTime = 0; // Réinitialiser le temps pour superposer le son
     sound.play();
+
+    // Retour haptique doux
+    if (navigator.vibrate) {
+        navigator.vibrate(50); // Vibration de 50ms
+    }
 };
 
 // Créer une pastille qui s'éloigne
