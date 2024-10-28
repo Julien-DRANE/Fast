@@ -3,14 +3,14 @@ const container = document.getElementById('canvas-container');
 let pastilleCount = 0; // Compteur de pastilles créées
 const maxPastilles = 6; // Nombre maximum de pastilles
 
-// Niveaux de volume (de très faible à faible)
+// Niveaux de volume (de très faible à faible) et tailles correspondantes
 const volumeLevels = [0.05, 0.1, 0.2, 0.3, 0.5]; // 0.05 = très faible, 0.5 = faible
 const pastilleSizes = {
-    0.05: '30px', // Très faible
-    0.1: '40px',  // Faible
-    0.2: '50px',  // Moyen
-    0.3: '60px',  // Moyen élevé
-    0.5: '70px'   // Élevé
+    0.05: '100px', // Très faible
+    0.1: '120px',  // Faible
+    0.2: '140px',  // Moyen
+    0.3: '160px',  // Moyen élevé
+    0.5: '180px'   // Élevé
 };
 
 // Charger les sons
@@ -62,7 +62,7 @@ function createPastille(event) {
     pastille.style.height = pastilleSize; // Taille en fonction du volume
     container.appendChild(pastille);
     
-    // Joue un son
+    // Joue le son avec un rythme lent
     playSoundAndAnimatePastille(pastille, sound);
     pastilleCount++; // Incrémente le compteur de pastilles
 }
@@ -82,6 +82,13 @@ function playSoundAndAnimatePastille(pastille, sound) {
             pastilleCount--; // Décrémente le compteur de pastilles
         }, 500); // Retirer après la transition
     }, 2000); // Disparaître après 2 secondes
+
+    // Répéter le son à un rythme lent
+    const rhythmInterval = 800; // Intervalle entre les répétitions (en ms)
+    setInterval(() => {
+        sound.currentTime = 0; // Rewind to the start
+        sound.play();
+    }, rhythmInterval);
 }
 
 // Fonction pour générer un nombre aléatoire
