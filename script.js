@@ -11,10 +11,11 @@ function initAudio() {
 function loadSounds() {
     const promises = [];
     for (let i = 1; i <= 16; i++) {
-        promises.push(fetch(`sounds/s${i}.mp3`) // Utiliser s${i}.mp3 sans zéro devant
+        const fileName = (i < 10) ? `sounds/s0${i}.mp3` : `sounds/s${i}.mp3`; // Utiliser s01.mp3 pour i < 10
+        promises.push(fetch(fileName)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`Erreur lors du chargement de s${i}.mp3`);
+                    throw new Error(`Erreur lors du chargement de ${fileName}`);
                 }
                 return response.arrayBuffer();
             })
