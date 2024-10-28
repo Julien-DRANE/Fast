@@ -116,9 +116,7 @@ function createPastille(doubleProcess) {
     pastille.style.height = pastilleSize; // Taille
     container.appendChild(pastille);
     
-    // Faire disparaître la pastille via l'animation CSS
-    // L'animation `fadeOut` est déjà définie dans le CSS
-    // La pastille sera supprimée automatiquement à la fin de l'animation
+    // La disparition est gérée par l'animation CSS `fadeOut`
 }
 
 // Fonction pour enlever les pastilles rouges et orange
