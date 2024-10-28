@@ -97,29 +97,26 @@ function playBeat(pastille, rhythmInterval) {
         isPlaying = false; // Remettre à faux lorsque le son est terminé
     };
 
-    // Calculer les intervalles des sons pour la polyrythmie
-    const beatInterval = 600; // Intervalle principal en ms
-    const secondaryBeatInterval = beatInterval * 2; // Intervalle secondaire
+    const primaryInterval = 1000; // Intervalle pour le son principal (1 seconde pour 60 BPM)
+    const secondaryInterval = primaryInterval * 1.5; // Décalage pour le son secondaire (croche pointée, soit 750 ms)
 
-    // Jouer le son principal à l'intervalle principal
-    setInterval(() => {
-        if (!isPlaying) { // Ne pas jouer si un son est déjà en cours
+    // Jouer le son principal
+    setTimeout(() => {
+        if (!isPlaying) {
+            sound.currentTime = 0; // Rewind to the start
+            sound.play();
+        }
+    }, primaryInterval); // Tempo principal
+
+    // Jouer le son secondaire
+    setTimeout(() => {
+        if (!isPlaying) {
             const soundIndex = Math.floor(Math.random() * sounds.length); // Nouveau son à chaque intervalle
             const sound = sounds[soundIndex];
             sound.currentTime = 0; // Rewind to the start
             sound.play();
         }
-    }, beatInterval);
-
-    // Jouer le son secondaire à l'intervalle secondaire
-    setInterval(() => {
-        if (!isPlaying) { // Ne pas jouer si un son est déjà en cours
-            const soundIndex = Math.floor(Math.random() * sounds.length); // Nouveau son à chaque intervalle
-            const sound = sounds[soundIndex];
-            sound.currentTime = 0; // Rewind to the start
-            sound.play();
-        }
-    }, secondaryBeatInterval);
+    }, secondaryInterval); // Tempo secondaire
 }
 
 // Fonction pour jouer un son d'une tierce descendante
@@ -144,12 +141,4 @@ function mapIntervalToSize(interval) {
 // Animer la pastille pour lui donner un effet vivant
 function animatePastille(pastille) {
     const vibrate = () => {
-        const offsetX = random(5) - 2; // Déplacement aléatoire en X
-        const offsetY = random(5) - 2; // Déplacement aléatoire en Y
-        pastille.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-    };
-    setInterval(vibrate, 100); // Vibre toutes les 100 ms
-}
-
-// Charger les sons lors du chargement
-loadSounds();
+        const offsetX = 
