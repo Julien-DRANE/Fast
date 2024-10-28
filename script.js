@@ -19,7 +19,6 @@ let isTouching = false;
 let baseRate = 0.5; // Taux minimum
 let maxRate = 5;    // Taux maximum
 let duration = 5;   // Durée de l'oscillation en secondes
-let oscillationFrequency = 1; // Fréquence de l'oscillation
 
 // Fonction pour obtenir le taux de pastilles à partir de la fonction sinusoïdale
 const getCurrentRate = (time) => {
@@ -81,19 +80,18 @@ const rainbowEffect = () => {
 
 // Mettre à jour les pastilles de couleur
 const updateRipples = () => {
-    for (let i = 0; i < ripples.length; i++) {
+    for (let i = ripples.length - 1; i >= 0; i--) {
         ripples[i].radius += 2;  // Augmenter le rayon pour l'effet de pastille
         ripples[i].alpha -= 0.02; // Diminuer l'opacité
         if (ripples[i].alpha <= 0) {
-            ripples.splice(i, 1);
-            i--;
+            ripples.splice(i, 1); // Supprimer la pastille si alpha <= 0
         }
     }
 };
 
 // Mettre à jour les étoiles brillantes
 const updateStars = () => {
-    for (let i = 0; i < stars.length; i++) {
+    for (let i = stars.length - 1; i >= 0; i--) {
         stars[i].size += 0.5; // Augmenter la taille de l'étoile
         stars[i].alpha -= 0.01; // Diminuer l'opacité
         stars[i].speed += 0.05; // Augmenter la vitesse
@@ -102,21 +100,19 @@ const updateStars = () => {
         stars[i].y -= stars[i].speed;
 
         if (stars[i].alpha <= 0) {
-            stars.splice(i, 1);
-            i--;
+            stars.splice(i, 1); // Supprimer l'étoile si alpha <= 0
         }
     }
 };
 
 // Mettre à jour les pastilles qui s'éloignent
 const updateMovingPastilles = () => {
-    for (let i = 0; i < movingPastilles.length; i++) {
+    for (let i = movingPastilles.length - 1; i >= 0; i--) {
         movingPastilles[i].y -= movingPastilles[i].speed; // Éloigner la pastille
         movingPastilles[i].alpha -= 0.02; // Diminuer l'opacité
 
         if (movingPastilles[i].alpha <= 0) {
-            movingPastilles.splice(i, 1);
-            i--;
+            movingPastilles.splice(i, 1); // Supprimer la pastille si alpha <= 0
         }
     }
 };
