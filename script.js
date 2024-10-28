@@ -23,7 +23,7 @@ function loadSounds() {
         const audio = new Audio(fileName);
         sounds.push(audio); // Ne pas définir le volume ici, le volume sera défini plus tard
     }
-    
+
     // Charger et jouer le son de fond
     const backgroundSound = new Audio('sounds/nature.mp3'); // Chemin vers le fichier audio
     backgroundSound.loop = true; // Faire jouer le son en boucle
