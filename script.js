@@ -162,18 +162,20 @@ const draw = () => {
 
 // Démarrer la création de pastilles lors du contact
 const startCreatingRipples = (x, y) => {
-    isTouching = true;
-    createRipple(x, y);
-    createStar(x, y); // Créer une étoile à l'endroit touché
-    createMovingPastille(x, y); // Créer une pastille qui s'éloigne
+    if (!isTouching) { // Empêche de démarrer une nouvelle création si déjà en cours
+        isTouching = true;
+        createRipple(x, y);
+        createStar(x, y); // Créer une étoile à l'endroit touché
+        createMovingPastille(x, y); // Créer une pastille qui s'éloigne
 
-    // Créer des pastilles à intervalles réguliers
-    rippleInterval = setInterval(() => {
-        if (movingPastilles.length < pastilleRate) { // Limiter à 3 pastilles par seconde
-            createRipple(x, y);
-            createMovingPastille(x, y); // Créer une pastille qui s'éloigne
-        }
-    }, 1000 / pastilleRate); // 3 pastilles par seconde
+        // Créer des pastilles à intervalles réguliers
+        rippleInterval = setInterval(() => {
+            if (movingPastilles.length < pastilleRate) { // Limiter à 3 pastilles par seconde
+                createRipple(x, y);
+                createMovingPastille(x, y); // Créer une pastille qui s'éloigne
+            }
+        }, 1000 / pastilleRate); // 3 pastilles par seconde
+    }
 };
 
 // Arrêter la création de pastilles lorsque le contact se termine
