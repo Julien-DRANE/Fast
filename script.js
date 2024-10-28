@@ -19,6 +19,7 @@ let isTouching = false;
 let baseRate = 0.5; // Taux minimum
 let maxRate = 5;    // Taux maximum
 let duration = 5;   // Durée de l'oscillation en secondes
+let pastilleRate = 3; // Limite à 3 pastilles par seconde
 
 // Fonction pour obtenir le taux de pastilles à partir de la fonction sinusoïdale
 const getCurrentRate = (time) => {
@@ -44,7 +45,7 @@ const createRipple = (x, y) => {
 
 // Créer une pastille qui s'éloigne
 const createMovingPastille = (x, y) => {
-    const size = Math.random() * 10 + 1; // Taille aléatoire pour la pastille qui s'éloigne
+    const size = Math.random() * 10 + 5; // Taille aléatoire pour la pastille qui s'éloigne
     movingPastilles.push({ x, y, size, alpha: 0.8, speed: 2 }); // Définir alpha à 0.8 pour éviter l'effet flash
 };
 
@@ -55,7 +56,7 @@ const changeColor = () => {
 
 // Ajouter une étoile brillante
 const createStar = (x, y) => {
-    const size = Math.random() * 5 + 1; // Taille aléatoire pour l'étoile
+    const size = Math.random() * 5 + 2; // Taille aléatoire pour l'étoile
     stars.push({ x, y, size, alpha: 1, speed: 1 });
 };
 
@@ -168,9 +169,11 @@ const startCreatingRipples = (x, y) => {
 
     // Créer des pastilles à intervalles réguliers
     rippleInterval = setInterval(() => {
-        createRipple(x, y);
-        createMovingPastille(x, y); // Créer une pastille qui s'éloigne
-    }, 1000 / getCurrentRate(0)); // Utiliser la fonction pour obtenir le taux
+        if (movingPastilles.length < pastilleRate) { // Limiter à 3 pastilles par seconde
+            createRipple(x, y);
+            createMovingPastille(x, y); // Créer une pastille qui s'éloigne
+        }
+    }, 1000 / pastilleRate); // 3 pastilles par seconde
 };
 
 // Arrêter la création de pastilles lorsque le contact se termine
