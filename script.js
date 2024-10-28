@@ -66,7 +66,7 @@ function createPastille(event) {
     // Faire disparaître la pastille comme de la fumée
     setTimeout(() => {
         pastille.style.transition = 'opacity 0.5s, transform 0.5s'; // Transition pour l'opacité et la transformation
-        pastille.style.opacity = '0.8'; // Rendre la pastille transparente
+        pastille.style.opacity = '0'; // Rendre la pastille transparente
         pastille.style.transform = 'scale(0.5)'; // Réduire la taille
         setTimeout(() => {
             pastille.remove(); // Retirer l'élément du DOM
@@ -88,39 +88,11 @@ function createPastille(event) {
 
 // Joue un son à chaque battement
 function playBeat(pastille, rhythmInterval) {
-    if (isPlaying) return; // Ne joue pas si un son est déjà en cours
-
     // Choisir un son aléatoire parmi les sons disponibles
     const soundIndex = Math.floor(Math.random() * sounds.length);
     const sound = sounds[soundIndex];
     sound.currentTime = 0; // Rewind to the start
-    isPlaying = true; // Marque que le son est en cours de lecture
     sound.play();
-
-    sound.onended = () => {
-        isPlaying = false; // Remettre à faux lorsque le son est terminé
-    };
-
-    const primaryInterval = 1000; // Intervalle pour le son principal (1 seconde pour 60 BPM)
-    const secondaryInterval = primaryInterval * 1.5; // Décalage pour le son secondaire (croche pointée, soit 750 ms)
-
-    // Jouer le son principal
-    setTimeout(() => {
-        if (!isPlaying) {
-            sound.currentTime = 0; // Rewind to the start
-            sound.play();
-        }
-    }, primaryInterval); // Tempo principal
-
-    // Jouer le son secondaire
-    setTimeout(() => {
-        if (!isPlaying) {
-            const soundIndex = Math.floor(Math.random() * sounds.length); // Nouveau son à chaque intervalle
-            const sound = sounds[soundIndex];
-            sound.currentTime = 0; // Rewind to the start
-            sound.play();
-        }
-    }, secondaryInterval); // Tempo secondaire
 }
 
 // Fonction pour jouer un son d'une tierce descendante
