@@ -11,6 +11,7 @@ let currentColor = 0;
 let rainbowMode = false;
 const ripples = [];
 const stars = [];
+const movingPastilles = [];
 let rippleInterval;
 let isTouching = false;
 
@@ -21,6 +22,12 @@ const createRipple = (x, y) => {
     changeColor();
     sound.currentTime = 0; // Réinitialiser le temps pour superposer le son
     sound.play();
+};
+
+// Créer une pastille qui s'éloigne
+const createMovingPastille = (x, y) => {
+    const size = Math.random() * 10 + 5; // Taille aléatoire pour la pastille qui s'éloigne
+    movingPastilles.push({ x, y, size, alpha: 1, speed: 2 });
 };
 
 // Changer la couleur actuelle
@@ -82,6 +89,19 @@ const updateStars = () => {
     }
 };
 
+// Mettre à jour les pastilles qui s'éloignent
+const updateMovingPastilles = () => {
+    for (let i = 0; i < movingPastilles.length; i++) {
+        movingPastilles[i].y -= movingPastilles[i].speed; // Éloigner la pastille
+        movingPastilles[i].alpha -= 0.02; // Diminuer l'opacité
+
+        if (movingPastilles[i].alpha <= 0) {
+            movingPastilles.splice(i, 1);
+            i--;
+        }
+    }
+};
+
 // Dessiner sur le canvas
 const draw = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Effacer le canvas chaque image
@@ -110,8 +130,17 @@ const draw = () => {
         ctx.fill();
     });
 
+    // Dessiner les pastilles qui s'éloignent
+    movingPastilles.forEach(pastille => {
+        ctx.fillStyle = `rgba(255, 255, 255, ${pastille.alpha})`; // Couleur des pastilles qui s'éloignent
+        ctx.beginPath();
+        ctx.arc(pastille.x, pastille.y, pastille.size, 0, Math.PI * 2, false);
+        ctx.fill();
+    });
+
     updateRipples();
     updateStars();
+    updateMovingPastilles();
     requestAnimationFrame(draw);
 };
 
@@ -120,11 +149,13 @@ const startCreatingRipples = (x, y) => {
     isTouching = true;
     createRipple(x, y);
     createStar(x, y); // Créer une étoile à l'endroit touché
+    createMovingPastille(x, y); // Créer une pastille qui s'éloigne
 
     // Créer des pastilles à intervalles réguliers
     rippleInterval = setInterval(() => {
         createRipple(x, y);
-    }, 1000 / 5); // 5 pastilles par seconde
+        createMovingPastille(x, y); // Créer une pastille qui s'éloigne
+    }, 1000 / 3); // 3 pastilles par seconde
 };
 
 // Arrêter la création de pastilles lorsque le contact se termine
@@ -138,6 +169,7 @@ const updateRipplePosition = (x, y) => {
     if (isTouching) {
         createRipple(x, y);
         createStar(x, y); // Créer une étoile à l'endroit touché
+        createMovingPastille(x, y); // Créer une pastille qui s'éloigne
     }
 };
 
