@@ -10,7 +10,7 @@ let lastSoundIndex = -1; // Pour suivre le dernier son joué
 // Niveaux de volume (de très faible à faible) et tailles correspondantes
 const volumeLevels = [0.05, 0.1, 0.2, 0.3]; // Niveaux de volume doux
 const pastilleSizes = ['80px', '100px', '120px']; // Tailles de pastilles
-const warmColors = ['#048a81ff', '#06d6a0ff', '#54c6ebff', '#8a89c0ff', '#cda2abff']; // Couleurs fournies
+const warmColors = ['#FFA500', '#FFD700', '#FF4500', '#FFFF00', '#FF8C00']; // Couleurs chaudes fournies
 
 // Charger les sons
 function loadSounds() {
