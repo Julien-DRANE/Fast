@@ -23,7 +23,7 @@ function loadSounds() {
         const audio = new Audio(fileName);
         sounds.push(audio); // Ne pas définir le volume ici, le volume sera défini plus tard
     }
-
+    
     // Charger et jouer le son de fond
     const backgroundSound = new Audio('sounds/nature.mp3'); // Chemin vers le fichier audio
     backgroundSound.loop = true; // Faire jouer le son en boucle
@@ -60,7 +60,7 @@ function createPastille(event) {
     const sound2 = sounds[soundIndex2];
 
     // Calculer la taille de la pastille en fonction du volume
-    const pastilleSize = pastilleSizes[sound1.volume]; // Utiliser le volume du premier son
+    const pastilleSize = pastilleSizes[volumeLevels[Math.floor(Math.random() * volumeLevels.length)]]; // Taille aléatoire basée sur le volume
     const couleur = warmColors[Math.floor(Math.random() * warmColors.length)]; // Couleur chaude aléatoire
     const pastille = document.createElement('div');
     pastille.classList.add('pastille'); // Ajout de la classe d'animation
