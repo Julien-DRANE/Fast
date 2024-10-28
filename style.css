@@ -36,6 +36,25 @@ body {
     box-shadow: 0 0 30px rgba(76, 175, 80, 0.8), 0 0 60px rgba(102, 187, 106, 0.6); /* Glow intense pour les pastilles vertes */
 }
 
+/* Traînée derrière les pastilles */
+.trainee {
+    position: absolute;
+    border-radius: 50%; /* Rendre la traînée ronde */
+    opacity: 0.5; /* Légèrement transparent */
+    animation: moveUp 2s forwards; /* Animation pour le mouvement vers le haut */
+}
+
+/* Animation pour la traînée */
+@keyframes moveUp {
+    0% {
+        transform: translateY(0); /* Position initiale */
+    }
+    100% {
+        transform: translateY(-100px); /* Déplacement vers le haut */
+        opacity: 0; /* Disparaît progressivement */
+    }
+}
+
 /* Optionnel : Légère augmentation de taille au survol */
 .pastille:hover {
     transform: scale(1.1);
