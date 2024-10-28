@@ -6,11 +6,13 @@ let activeSounds = 0; // Compteur de sons actifs
 const maxActiveSounds = 5; // Maximum de sons simultanés
 let soundInterval; // Intervalle pour jouer les sons
 let lastSoundIndex = -1; // Pour suivre le dernier son joué
+let isDoubleProcess = false; // Indicateur pour savoir si le processus est doublé
 
 // Niveaux de volume (de très faible à faible) et tailles correspondantes
 const volumeLevels = [0.05, 0.1, 0.2, 0.3]; // Niveaux de volume doux
 const pastilleSizes = ['80px', '100px', '120px']; // Tailles de pastilles
-const warmColors = ['#FFA500', '#FFD700', '#FF4500', '#FFFF00', '#FF8C00']; // Couleurs chaudes fournies
+const warmColors = ['#FFA500', '#FFD700', '#FF4500', '#FFFF00', '#FF8C00']; // Couleurs chaudes
+const greenColors = ['#4CAF50', '#66BB6A']; // Couleurs vertes pour les pastilles
 
 // Charger les sons
 function loadSounds() {
@@ -35,14 +37,17 @@ document.addEventListener('click', handleInteraction);
 function handleInteraction() {
     if (activeSounds === 0) { // Si aucun son n'est en cours, démarrer la génération
         startGenerating();
+    } else if (!isDoubleProcess) { // Si déjà en cours, doubler le processus
+        isDoubleProcess = true;
+        startGenerating(true); // Démarrer le double processus
     }
 }
 
 // Commencer à générer des pastilles et des sons
-function startGenerating() {
+function startGenerating(doubleProcess = false) {
     soundInterval = setInterval(() => {
         if (activeSounds < maxActiveSounds) { // Vérifie le nombre de sons actifs
-            playSound(); // Joue un son
+            playSound(doubleProcess); // Joue un son
         }
     }, getRandomInterval()); // Espacement aléatoire pour créer de la polyrythmie
 }
@@ -54,7 +59,7 @@ function getRandomInterval() {
 }
 
 // Jouer un son
-function playSound() {
+function playSound(doubleProcess) {
     let soundIndex;
     do {
         soundIndex = Math.floor(Math.random() * sounds.length); // Choisir un son aléatoire
@@ -72,7 +77,7 @@ function playSound() {
     activeSounds++; // Incrémenter le compteur de sons actifs
 
     // Créer une pastille
-    createPastille();
+    createPastille(doubleProcess);
 
     // Lorsque le son se termine, décrémenter le compteur de sons actifs
     currentSound.addEventListener('ended', () => {
@@ -81,10 +86,12 @@ function playSound() {
 }
 
 // Créer une pastille
-function createPastille() {
+function createPastille(doubleProcess) {
     const x = Math.random() * (window.innerWidth - 120); // Position X aléatoire, 120 pour éviter le débordement
     const y = Math.random() * (window.innerHeight - 120); // Position Y aléatoire, 120 pour éviter le débordement
-    const couleur = warmColors[Math.floor(Math.random() * warmColors.length)]; // Couleur chaude aléatoire
+    const couleur = doubleProcess 
+        ? greenColors[Math.floor(Math.random() * greenColors.length)] // Couleurs vertes si double process
+        : warmColors[Math.floor(Math.random() * warmColors.length)]; // Couleur chaude aléatoire
     const pastilleSize = pastilleSizes[Math.floor(Math.random() * pastilleSizes.length)]; // Taille aléatoire
 
     const pastille = document.createElement('div');
