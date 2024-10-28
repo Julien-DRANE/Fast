@@ -1,5 +1,6 @@
 let sounds = [];
 const container = document.getElementById('canvas-container');
+let pastilleCount = 0; // Compteur de pastilles créées
 
 // Charger les sons
 function loadSounds() {
@@ -40,6 +41,12 @@ function createPastille(event) {
     
     // Joue un son
     playBeat(pastille, rhythmInterval);
+    pastilleCount++; // Incrémente le compteur de pastilles
+
+    // Pitch d'une tierce descendante toutes les 4 pastilles
+    if (pastilleCount % 4 === 0) {
+        pitchThirdDown();
+    }
 
     let scale = 1;
     setInterval(() => {
@@ -56,12 +63,21 @@ function playBeat(pastille, rhythmInterval) {
     sound.play();
 
     const soundInterval = random(600, 1800); // Ralentir le son
-    const adjustedSoundInterval = soundInterval * 1.5; // Espacer les sons pour un rythme lent
+    const adjustedSoundInterval = soundInterval * 5; // Espacer les sons pour un rythme lent
 
     setInterval(() => {
         sound.currentTime = 0; // Rewind to the start
         sound.play();
     }, adjustedSoundInterval);
+}
+
+// Fonction pour jouer un son d'une tierce descendante
+function pitchThirdDown() {
+    const soundIndex = Math.floor(Math.random() * 16);
+    const sound = sounds[soundIndex];
+    sound.currentTime = 0; // Rewind to the start
+    sound.playbackRate = 0.833; // Pitch d'une tierce descendante (environ 0.833 pour 3 demi-tons)
+    sound.play();
 }
 
 // Fonction pour générer un nombre aléatoire
