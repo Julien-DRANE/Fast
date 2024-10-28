@@ -1,7 +1,7 @@
 let sounds = [];
 const container = document.getElementById('canvas-container');
 let pastilleCount = 0; // Compteur de pastilles créées
-const maxPastilles = 6; // Nombre maximum de pastilles
+const maxPastilles = 4; // Limite du nombre de pastilles
 
 // Niveaux de volume (de très faible à faible) et tailles correspondantes
 const volumeLevels = [0.05, 0.1, 0.2, 0.3, 0.5]; // 0.05 = très faible, 0.5 = faible
@@ -36,7 +36,7 @@ document.addEventListener('click', handleInteraction);
 
 // Fonction de gestion des interactions
 function handleInteraction(event) {
-    if (pastilleCount < maxPastilles) {
+    if (pastilleCount < maxPastilles) { // Vérifie si le nombre maximum de pastilles n'est pas atteint
         createPastille(event);
     }
 }
@@ -62,7 +62,7 @@ function createPastille(event) {
     pastille.style.height = pastilleSize; // Taille en fonction du volume
     container.appendChild(pastille);
     
-    // Joue le son avec un rythme lent
+    // Joue le son et configure la répétition
     playSoundAndAnimatePastille(pastille, sound);
     pastilleCount++; // Incrémente le compteur de pastilles
 }
@@ -72,23 +72,42 @@ function playSoundAndAnimatePastille(pastille, sound) {
     sound.currentTime = 0; // Rewind to the start
     sound.play();
 
-    // Faire disparaître la pastille après 2 secondes
-    setTimeout(() => {
-        pastille.style.transition = 'opacity 0.5s, transform 0.5s'; // Transition pour l'opacité et la transformation
-        pastille.style.opacity = '0'; // Rendre la pastille transparente
-        pastille.style.transform = 'scale(0.5)'; // Réduire la taille
-        setTimeout(() => {
-            pastille.remove(); // Retirer l'élément du DOM
-            pastilleCount--; // Décrémente le compteur de pastilles
-        }, 500); // Retirer après la transition
-    }, 2000); // Disparaître après 2 secondes
-
     // Répéter le son à un rythme lent
-    const rhythmInterval = 800; // Intervalle entre les répétitions (en ms)
-    setInterval(() => {
+    const rhythmInterval = 800 / 3; // Diviser par trois le tempo (en ms)
+    
+    const repeatSound = setInterval(() => {
         sound.currentTime = 0; // Rewind to the start
         sound.play();
+
+        // Réapparaître la pastille à chaque répétition
+        const newPastille = document.createElement('div');
+        const couleur = `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
+        newPastille.classList.add('pastille');
+        newPastille.style.backgroundColor = couleur;
+        newPastille.style.left = `${pastille.offsetLeft}px`; // Positionnement centré
+        newPastille.style.top = `${pastille.offsetTop}px`; // Positionnement centré
+        newPastille.style.width = pastille.style.width; // Taille en fonction du volume
+        newPastille.style.height = pastille.style.height; // Taille en fonction du volume
+        container.appendChild(newPastille);
+
+        // Faire disparaître la nouvelle pastille après 2 secondes
+        setTimeout(() => {
+            newPastille.style.transition = 'opacity 0.5s, transform 0.5s'; // Transition pour l'opacité et la transformation
+            newPastille.style.opacity = '0'; // Rendre la pastille transparente
+            newPastille.style.transform = 'scale(0.5)'; // Réduire la taille
+            setTimeout(() => {
+                newPastille.remove(); // Retirer l'élément du DOM
+            }, 500); // Retirer après la transition
+        }, 2000); // Disparaître après 2 secondes
+
     }, rhythmInterval);
+
+    // Arrêter la répétition après 10 répétitions (ou selon ton besoin)
+    setTimeout(() => {
+        clearInterval(repeatSound);
+        pastille.remove(); // Retirer la pastille initiale
+        pastilleCount--; // Décrémente le compteur de pastilles
+    }, 10 * rhythmInterval); // Arrêter après 10 répétitions
 }
 
 // Fonction pour générer un nombre aléatoire
