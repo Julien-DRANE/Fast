@@ -106,53 +106,39 @@ function createPastille(doubleProcess) {
 
     const pastille = document.createElement('div');
     pastille.classList.add('pastille'); // Ajout de la classe d'animation
+    if (doubleProcess) {
+        pastille.classList.add('green'); // Ajout de la classe pour les pastilles vertes
+    }
     pastille.style.backgroundColor = couleur;
     pastille.style.left = `${x}px`; // Positionnement aléatoire
     pastille.style.top = `${y}px`; // Positionnement aléatoire
     pastille.style.width = pastilleSize; // Taille
     pastille.style.height = pastilleSize; // Taille
     container.appendChild(pastille);
-
-    // Créer une trainée
-    createTrainée(x, y, couleur); // Créer une trainée avec la même couleur
-
-    // Faire disparaître la pastille de manière logarithmique
-    let opacity = 0.7; // Opacité initiale
-    const fadeOutInterval = setInterval(() => {
-        opacity *= 0.7; // Diminuer l'opacité logarithmiquement
-        pastille.style.opacity = opacity; // Appliquer la nouvelle opacité
-
-        // Si l'opacité est très faible, retirer la pastille
-        if (opacity < 0.05) {
-            clearInterval(fadeOutInterval); // Arrêter l'intervalle
-            pastille.remove(); // Retirer la pastille
-        }
-    }, 100); // Ajuster la durée de l'intervalle
-
-    // Faire disparaître la pastille après un certain temps
-    setTimeout(() => {
-        clearInterval(fadeOutInterval); // Arrêter l'intervalle si le temps écoulé
-        pastille.remove(); // Retirer la pastille
-    }, 2000); // Disparaît après 2 secondes
-}
-
-// Créer une trainée
-function createTrainée(x, y, couleur) {
-    const trainée = document.createElement('div');
-    trainée.classList.add('trainée'); // Ajout de la classe d'animation
-    trainée.style.backgroundColor = couleur;
-    trainée.style.left = `${x}px`; // Positionnement de la trainée
-    trainée.style.top = `${y}px`; // Positionnement de la trainée
-    trainée.style.width = '120px'; // Largeur de la trainée
-    trainée.style.height = '120px'; // Hauteur de la trainée
-    container.appendChild(trainée);
-
-    // Faire disparaître la trainée après un certain temps
-    setTimeout(() => {
-        trainée.style.opacity = '0'; // Rendre la trainée transparente
-        trainée.addEventListener('transitionend', () => trainée.remove()); // Retirer la trainée après la transition
-    }, 2000); // Disparaît après 2 secondes
+    
+    // Faire disparaître la pastille via l'animation CSS
+    // L'animation `fadeOut` est déjà définie dans le CSS
+    // La pastille sera supprimée automatiquement à la fin de l'animation
 }
 
 // Fonction pour enlever les pastilles rouges et orange
-function removeWarm
+function removeWarmPastilles() {
+    const pastilles = container.querySelectorAll('.pastille');
+    pastilles.forEach(pastille => {
+        const color = pastille.style.backgroundColor;
+        if (warmColors.includes(color)) {
+            pastille.remove(); // Retirer les pastilles rouges et orange
+        }
+    });
+}
+
+// Fonction pour arrêter la génération
+function stopGenerating() {
+    clearInterval(soundInterval); // Arrêter l'intervalle
+    activeSounds = 0; // Réinitialiser le compteur de sons actifs
+    clickCount = 0; // Réinitialiser le compteur de clics
+    isDoubleProcess = false; // Réinitialiser l'indicateur de processus
+}
+
+// Charger les sons lors du chargement
+loadSounds();
