@@ -118,8 +118,26 @@ function createPastille(doubleProcess) {
     
     // Créer la traînée derrière la pastille
     createTrainee(x, y); // Appeler la fonction pour créer la traînée
-    
+
+    // Ajouter l'événement de clic pour interagir avec la pastille
+    pastille.addEventListener('click', () => {
+        playDifferentSound(currentSound); // Joue un son différent
+        pastille.remove(); // Supprimer la pastille au clic
+    });
+
     // Faire disparaître la pastille via l'animation CSS
+}
+
+// Fonction pour jouer un son différent
+function playDifferentSound(previousSound) {
+    let soundIndex;
+    do {
+        soundIndex = Math.floor(Math.random() * sounds.length); // Choisir un son aléatoire
+    } while (soundIndex === sounds.indexOf(previousSound)); // Éviter de jouer le même son à la suite
+
+    const differentSound = sounds[soundIndex];
+    differentSound.currentTime = 0; // Remettre à zéro le temps
+    differentSound.play(); // Jouer le son différent
 }
 
 // Fonction pour créer une traînée
@@ -128,8 +146,8 @@ function createTrainee(x, y) {
     traine.classList.add('trainee'); // Ajout de la classe de traînée
     traine.style.left = `${x + 40}px`; // Position X légèrement décalée (au centre de la pastille)
     traine.style.top = `${y + 70}px`; // Position Y légèrement en dessous de la pastille
-    traine.style.width = '10px'; // Largeur de la traînée
-    traine.style.height = '60px'; // Hauteur de la traînée
+    traine.style.width = '15px'; // Largeur de la traînée
+    traine.style.height = '100px'; // Hauteur de la traînée
     traine.style.backgroundColor = 'rgba(255, 255, 0, 0.8)'; // Couleur de la traînée
     container.appendChild(traine); // Ajouter la traînée au conteneur
 
