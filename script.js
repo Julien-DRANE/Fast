@@ -53,11 +53,13 @@ function createPastille(event) {
     const x = event.touches ? event.touches[0].clientX : event.clientX;
     const y = event.touches ? event.touches[0].clientY : event.clientY;
 
-    const soundIndex = Math.floor(Math.random() * sounds.length);
-    const sound = sounds[soundIndex];
+    const soundIndex1 = Math.floor(Math.random() * sounds.length);
+    const soundIndex2 = (soundIndex1 + 1) % sounds.length; // Choisir un autre son
+    const sound1 = sounds[soundIndex1];
+    const sound2 = sounds[soundIndex2];
 
     // Calculer la taille de la pastille en fonction du volume
-    const pastilleSize = pastilleSizes[sound.volume];
+    const pastilleSize = pastilleSizes[sound1.volume];
     const couleur = `rgb(${random(255)}, ${random(255)}, ${random(255)})`; // Couleur aléatoire
     const pastille = document.createElement('div');
     pastille.classList.add('pastille'); // Ajout de la classe d'animation
@@ -70,51 +72,52 @@ function createPastille(event) {
     container.appendChild(pastille);
     
     // Joue le son et configure la répétition
-    playSoundAndAnimatePastille(pastille, sound);
+    playSoundAndAnimatePastille(pastille, sound1, sound2);
     pastilleCount++; // Incrémente le compteur de pastilles
 }
 
 // Fonction pour jouer un son et animer la pastille
-function playSoundAndAnimatePastille(pastille, sound) {
-    sound.currentTime = 0; // Rewind to the start
-    sound.play();
+function playSoundAndAnimatePastille(pastille, sound1, sound2) {
+    let currentSound = sound1; // Commencer par le premier son
+    currentSound.currentTime = 0; // Rewind to the start
+    currentSound.play();
 
-    // Répéter le son à un rythme lent
+    // Définir les intervalles pour les répétitions
     const rhythmInterval = 800; // Intervalle entre les répétitions (en ms)
-    
+
+    // Créer une fonction pour jouer le son et osciller la pastille
     const repeatSound = setInterval(() => {
-        sound.currentTime = 0; // Rewind to the start
-        sound.play();
+        // Alterner entre les deux sons
+        currentSound.currentTime = 0; // Rewind to the start
+        currentSound.play();
+        currentSound = (currentSound === sound1) ? sound2 : sound1;
 
-        // Créer une nouvelle pastille décalée
-        const newPastille = document.createElement('div');
-        const couleur = pastille.style.backgroundColor; // Utiliser la même couleur
-        newPastille.classList.add('pastille');
-        newPastille.style.backgroundColor = couleur;
-        newPastille.style.left = `${pastille.offsetLeft + 10}px`; // Décalage léger à droite
-        newPastille.style.top = `${pastille.offsetTop + 10}px`; // Décalage léger vers le bas
-        newPastille.style.width = pastille.style.width; // Taille en fonction du volume
-        newPastille.style.height = pastille.style.height; // Taille en fonction du volume
-        container.appendChild(newPastille);
-
-        // Faire disparaître la nouvelle pastille après 2 secondes
-        setTimeout(() => {
-            newPastille.style.transition = 'opacity 0.5s, transform 0.5s'; // Transition pour l'opacité et la transformation
-            newPastille.style.opacity = '0'; // Rendre la pastille transparente
-            newPastille.style.transform = 'scale(0.5)'; // Réduire la taille
-            setTimeout(() => {
-                newPastille.remove(); // Retirer l'élément du DOM
-            }, 500); // Retirer après la transition
-        }, 2000); // Disparaître après 2 secondes
+        // Osciller la pastille
+        oscillatePastille(pastille);
 
     }, rhythmInterval);
 
-    // Arrêter la répétition après 10 répétitions (ou selon ton besoin)
-    setTimeout(() => {
+    // Arrêter la répétition lorsque la pastille est retirée
+    pastille.addEventListener('transitionend', () => {
         clearInterval(repeatSound);
         pastille.remove(); // Retirer la pastille initiale
         pastilleCount--; // Décrémente le compteur de pastilles
-    }, 10 * rhythmInterval); // Arrêter après 10 répétitions
+    });
+}
+
+// Fonction pour osciller la pastille
+function oscillatePastille(pastille) {
+    let oscillation = 0; // Position d'oscillation
+    const oscillationInterval = setInterval(() => {
+        oscillation += 5; // Augmenter l'oscillation
+        pastille.style.transform = `translateX(${Math.sin(oscillation * Math.PI / 180) * 10}px)`; // Oscillation de gauche à droite
+    }, 50); // Durée de l'oscillation
+
+    // Arrêter l'oscillation après un certain temps
+    setTimeout(() => {
+        clearInterval(oscillationInterval);
+        pastille.style.transform = 'translateX(0px)'; // Réinitialiser la position
+    }, 1000); // Durée d'oscillation
 }
 
 // Fonction pour générer un nombre aléatoire
