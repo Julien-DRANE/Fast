@@ -15,7 +15,8 @@ body {
     border-radius: 50%; /* Rendre la pastille ronde */
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); /* Ombre pour un effet flou */
     opacity: 0.8; /* Opacité initiale */
-    transition: transform 0.5s, opacity 0.5s; /* Transition pour les changements d'état */
+    transition: opacity 0.5s, transform 0.5s; /* Transition pour les changements d'état */
+    filter: blur(2px); /* Effet de flou pour un aspect duveteux */
 }
 
 .pastille:hover {
@@ -29,14 +30,11 @@ body {
 @keyframes fadeInOut {
     0% {
         opacity: 0.5; /* Démarre avec un peu de transparence */
-        transform: scale(1); /* Taille normale */
     }
     50% {
         opacity: 0.8; /* Plus opaque à mi-chemin */
-        transform: scale(1.05); /* Légère augmentation de taille */
     }
     100% {
         opacity: 0.5; /* Retourne à la transparence initiale */
-        transform: scale(1); /* Retour à la taille normale */
     }
 }
