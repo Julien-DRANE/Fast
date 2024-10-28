@@ -2,7 +2,7 @@ let sounds = [];
 const container = document.getElementById('canvas-container');
 let pastilleCount = 0; // Compteur de pastilles créées
 const maxPastilles = 6; // Nombre maximum de pastilles
-let clockInterval; // Intervalle pour l'horloge
+let isPlaying = false; // État pour vérifier si un son est en cours de lecture
 
 // Charger les sons
 function loadSounds() {
@@ -75,29 +75,31 @@ function createPastille(event) {
 
 // Joue un son à chaque battement
 function playBeat(pastille, rhythmInterval) {
+    if (isPlaying) return; // Ne joue pas si un son est déjà en cours
+
     // Choisir un son aléatoire parmi les sons disponibles
     const soundIndex = Math.floor(Math.random() * sounds.length);
     const sound = sounds[soundIndex];
     sound.currentTime = 0; // Rewind to the start
+    isPlaying = true; // Marque que le son est en cours de lecture
     sound.play();
 
-    // Calculer les intervalles des sons pour la polyrythmie
-    const beatInterval = 600; // Intervalle principal en ms
-    const secondaryBeatInterval = beatInterval * 2; // Intervalle secondaire
+    sound.onended = () => {
+        isPlaying = false; // Remettre à faux lorsque le son est terminé
+    };
 
-    // Fonction pour jouer les sons
-    setInterval(() => {
-        const soundIndex = Math.floor(Math.random() * sounds.length); // Nouveau son à chaque intervalle
-        const sound = sounds[soundIndex];
-        sound.currentTime = 0; // Rewind to the start
-        sound.play();
-    }, secondaryBeatInterval); // Jouer un son à chaque intervalle secondaire
+    const soundInterval = random(600, 1800); // Ralentir le son
+    const adjustedSoundInterval = soundInterval * 10; // Espacer les sons pour un rythme lent
 
-    // Jouer le son principal à l'intervalle principal
-    setInterval(() => {
-        sound.currentTime = 0; // Rewind to the start
-        sound.play();
-    }, beatInterval);
+    // Jouer le son avec un rythme syncopé
+    setTimeout(() => {
+        if (!isPlaying) { // S'assurer qu'un son n'est pas déjà joué
+            const nextSoundIndex = Math.floor(Math.random() * sounds.length);
+            const nextSound = sounds[nextSoundIndex];
+            nextSound.currentTime = 0; // Rewind to the start
+            nextSound.play();
+        }
+    }, adjustedSoundInterval); // Tempo syncopé
 }
 
 // Fonction pour jouer un son d'une tierce descendante
