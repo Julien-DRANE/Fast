@@ -116,7 +116,28 @@ function createPastille(doubleProcess) {
     pastille.style.height = pastilleSize; // Taille
     container.appendChild(pastille);
     
-    // La disparition est gérée par l'animation CSS `fadeOut`
+    // Créer la traînée derrière la pastille
+    createTrainee(x, y); // Appeler la fonction pour créer la traînée
+    
+    // Faire disparaître la pastille via l'animation CSS
+}
+
+// Fonction pour créer une traînée
+function createTrainee(x, y) {
+    const traine = document.createElement('div');
+    traine.classList.add('trainee'); // Ajout de la classe de traînée
+    traine.style.left = `${x + 40}px`; // Position X légèrement décalée (au centre de la pastille)
+    traine.style.top = `${y + 70}px`; // Position Y légèrement en dessous de la pastille
+    traine.style.width = '10px'; // Largeur de la traînée
+    traine.style.height = '60px'; // Hauteur de la traînée
+    traine.style.backgroundColor = 'rgba(255, 255, 0, 0.8)'; // Couleur de la traînée
+    container.appendChild(traine); // Ajouter la traînée au conteneur
+
+    // Disparition de la traînée après un certain temps
+    setTimeout(() => {
+        traine.style.opacity = '0'; // Faire disparaître la traînée
+        traine.addEventListener('transitionend', () => traine.remove()); // Retirer la traînée après la transition
+    }, 2000); // Disparaît après 2 secondes
 }
 
 // Fonction pour enlever les pastilles rouges et orange
