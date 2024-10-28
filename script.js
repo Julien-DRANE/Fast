@@ -15,6 +15,17 @@ const movingPastilles = [];
 let rippleInterval;
 let isTouching = false;
 
+// Variables pour l'oscillation des pastilles
+let baseRate = 0.5; // Taux minimum
+let maxRate = 5;    // Taux maximum
+let duration = 5;   // Durée de l'oscillation en secondes
+let oscillationFrequency = 1; // Fréquence de l'oscillation
+
+// Fonction pour obtenir le taux de pastilles à partir de la fonction sinusoïdale
+const getCurrentRate = (time) => {
+    return baseRate + (maxRate - baseRate) * 0.5 * (Math.sin((time * Math.PI * 2) / duration) + 1);
+};
+
 // Créer une pastille de couleur à l'endroit où l'utilisateur touche
 const createRipple = (x, y) => {
     const radius = Math.random() * 30 + 20; // Variation de taille
@@ -163,7 +174,7 @@ const startCreatingRipples = (x, y) => {
     rippleInterval = setInterval(() => {
         createRipple(x, y);
         createMovingPastille(x, y); // Créer une pastille qui s'éloigne
-    }, 1000 / 3); // 3 pastilles par seconde
+    }, 1000 / getCurrentRate(0)); // Utiliser la fonction pour obtenir le taux
 };
 
 // Arrêter la création de pastilles lorsque le contact se termine
@@ -223,4 +234,11 @@ setInterval(() => {
     }
 }, 30000); // Change this to 50000 for 50 seconds
 
+// Boucle principale pour dessiner
 draw();
+
+// Boucle pour mettre à jour le taux de pastilles
+setInterval(() => {
+    const currentTime = Date.now() / 1000; // Temps en secondes
+    rippleInterval = getCurrentRate(currentTime % duration); // Mettre à jour le taux de pastilles
+}, 100); // Met à jour toutes les 100 ms
